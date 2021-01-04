@@ -1,0 +1,16 @@
+<package>
+  <name>hydro_system</name>
+  <version>0.0.1</version>
+  <description>ROS nodes and utilities for an automated hydroponic system</description>
+  <maintainer email="1988kramer@gmail.com">maintainer</maintainer>
+  <license>Apache</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+</package>
