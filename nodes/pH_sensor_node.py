@@ -62,6 +62,7 @@ def get_data():
 def publish_ph():
   with lock:
     data = get_data()
+  rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],temp))
   pH_msg = PhMsg()
   pH_msg.header.stamp = rospy.Time.now()
   pH_msg.header.seq = seq
@@ -107,6 +108,7 @@ def calibrate_ph(req):
 def temp_callback(msg):
   with lock:
     temp = msg.temperature
+    rospy.loginfo('new temperature %.2f' % temp)
 
 
 if __name__ == '__main__':
