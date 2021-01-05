@@ -38,7 +38,6 @@ def publish_temp():
     msg.header.seq = seq
     temp_pub.publish(temp)
     seq += 1
-    rospy.Rate(1).sleep()
 
 if __name__ == '__main__':
 
