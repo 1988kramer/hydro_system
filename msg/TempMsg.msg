@@ -1,2 +1,2 @@
-header header
-Float32 temperature
+Header header
+float32 temperature
