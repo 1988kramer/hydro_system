@@ -52,7 +52,7 @@ def send_cmd(cmd):
     return None
 
 def get_data():
-  send_cmd('RT%.2f' % temp)
+  send_cmd('RT,%.2f' % temp)
   rospy.sleep(1.0)
   line = self.read_line()
 
