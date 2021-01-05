@@ -14,7 +14,7 @@ from hydro_system.msg import TempMsg
 base_dir = '/sys/bus/w1/devices/'
 device_dir = glob.glob(base_dir + '28*')[0]
 device_file = device_dir + '/w1_slave'
-temp_pub = rospy.Publisher('/temp', Float32, queue_size=1)
+temp_pub = rospy.Publisher('/temp', TempMsg, queue_size=1)
 seq = 0
 
 def read_temp_raw():
@@ -41,7 +41,8 @@ def publish_temp():
 
 if __name__ == '__main__':
 
-  try:
-    publish_temp()
-  except: rospy.ROSInterruptException:
-    pass
+  while not rospy.is_shutdown():
+    try:
+      publish_temp()
+    except: rospy.ROSInterruptException:
+      pass
