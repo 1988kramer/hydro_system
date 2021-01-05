@@ -72,7 +72,6 @@ def publish_ph():
 
 def calibrate_ph(req):
   rospy.loginfo('calibrating pH sensor')
-  rospy.sleep(5.0)
   if req.type.lower() == 'clear':
     rospy.loginfo('clearing pH calibration data')
     with lock:
@@ -85,20 +84,21 @@ def calibrate_ph(req):
   elif req.type.lower() == 'high':
     rospy.loginfo('High point calibration: place sensor probe in pH 10 reference solution and wait for readings to stabilize.')
 
-  mean = 0.0
-  current = 10.0
-  num_meas = 0.0
+  # ensure last window_size measurements are stable
+  window_size = 3
+  meas = np.zeros(window_size)
+  meas_idx = 0
+  num_meas = 0
   with lock:
-    while abs(current - mean) > 0.05:
+    while num_meas < window_size and abs(meas[meas_idx] - meas[meas > 0.0].mean()) > 0.05:
 
       if num_meas >= 10:
         rospy.loginfo('Calibration failed, pH reading failed to stabilize.')
         return CalibratePhResponse('Calibration failed')
-      current = get_data(ph_address)[0]
-      mean *= num_meas
-      mean += current
-      num_meas += 1.0
-      mean /= num_meas
+      meas[meas_idx] = get_data()[0]
+      rospy.loginfo('current: %.3f, mean: %.3f' % (meas[meas_idx], meas[meas > 0.0].mean()))
+      num_meas += 1
+      meas_idx = (meas_idx + 1) % window_size
 
     send_cmd('Cal,%s,%d' % (req.type,req.point))
   return CalibratePhResponse('Calibration completed successfully')
