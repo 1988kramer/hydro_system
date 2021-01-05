@@ -8,6 +8,22 @@ find_package(catkin
   std_msgs
 )
 
+add_message_files(
+  FILES
+  PhMsg.msg
+  TempMsg.msg
+)
+
+add_service_files(
+  FILES
+  CalibratePh.srv
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
 catkin_package(
   CATKIN_DEPENDS
   rospy
