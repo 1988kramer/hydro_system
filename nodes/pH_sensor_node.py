@@ -12,7 +12,9 @@ import rospy
 import numpy as np
 from hydro_system.msg import PhMsg, TempMsg
 from hydro_system.srv import CalibratePh, CalibratePhResponse
+from std_srvs import Empty
 import smbus
+from datetime import datetime
 import threading
 
 ph_pub = rospy.Publisher('/pH', PhMsg, queue_size=1)
@@ -20,6 +22,7 @@ seq = 0
 bus = smbus.SMBus(1)
 temp = 25.0
 sensor_address = 66 # check and verify this
+log = []
 lock = threading.Lock()
 
 
@@ -64,11 +67,30 @@ def publish_ph():
     data = get_data()
   rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],temp))
   pH_msg = PhMsg()
-  pH_msg.header.stamp = rospy.Time.now()
+  stamp = rospy.Time.now()
+  pH_msg.header.stamp = stamp
   pH_msg.header.seq = seq
   pH_msg.pH = data[0]
   ph_pub.publish(pH_msg)
   seq += 1
+
+  # log roughly once per minute
+  if len(log) == 0 or stamp.to_sec - log[-1] > 60.0: 
+    with lock:
+      log.append([stamp.to_sec,temp])
+
+  # dump log to file at least weekly
+  if log[-1][0] - log[0][0] > 604800.0: 
+    req = Empty()
+    save_log(req)
+
+
+def save_log(req):
+  with lock:
+    log_mat = np.array(log)
+    log = []
+  date_str = datetime.today().strftime('%d_%m_%Y')
+  np.save('/home/pi/logs/pH_' + date_str + '.npy', log_mat)
 
 
 def calibrate_ph(req):
@@ -114,6 +136,8 @@ def temp_callback(msg):
 if __name__ == '__main__':
 
   rospy.Subscriber('/water_temp', TempMsg, temp_callback, queue_size=1)
+  rospy.Service('calibrate_ph', CalibratePh, calibrate_ph)
+  rospy.Service('save_ph_log', Empty, save_log)
 
   while not rospy.is_shutdown():
     try:
