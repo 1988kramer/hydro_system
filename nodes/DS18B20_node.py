@@ -13,7 +13,7 @@ import numpy as np
 import threading
 from datetime import datetime
 from hydro_system.msg import TempMsg
-from std_srvs.srv import Empty
+from std_srvs.srv import Empty, EmptyResponse
 
 base_dir = '/sys/bus/w1/devices/'
 device_dir = glob.glob(base_dir + '28*')[0]
@@ -30,6 +30,9 @@ def read_temp_raw():
   return lines
 
 def publish_temp():
+  global seq
+  global log
+  global lock
   lines = read_temp_raw()
   while lines[0].strip()[-3:] != 'YES':
     rospy.Rate(5).sleep()
@@ -42,14 +45,14 @@ def publish_temp():
     temp_msg = TempMsg()
     temp_msg.temperature = temp
     temp_msg.header.stamp = stamp
-    msg.header.seq = seq
-    temp_pub.publish(temp)
+    temp_msg.header.seq = seq
+    temp_pub.publish(temp_msg)
     seq += 1
 
     # log roughly once per minute
-    if len(log) == 0 or stamp.to_sec - log[-1] > 60.0: 
+    if len(log) == 0 or stamp.to_sec() - log[-1][0] > 1.0: 
       with lock:
-        log.append([stamp.to_sec,temp])
+        log.append([stamp.to_sec(),temp])
 
     # dump log to file at least weekly
     if log[-1][0] - log[0][0] > 604800.0: 
@@ -58,11 +61,14 @@ def publish_temp():
 
 
 def save_log(req):
+  global log
+  global lock
   with lock:
     log_mat = np.array(log)
     log = []
   date_str = datetime.today().strftime('%d_%m_%Y')
-  np.save('/home/pi/logs/temp_' + date_str + '.npy', log_mat)
+  np.save('/home/pi/logs/temperature_' + date_str + '.npy', log_mat)
+  return []
 
 if __name__ == '__main__':
   rospy.init_node('temp', anonymous=True)
