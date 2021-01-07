@@ -1,11 +1,11 @@
+#! /usr/bin/env python
+
 '''
 ROS node for taking readings from the DS18B20 temperature sensor on 
 raspberry pi.
 
 Uses code from the example found at https://github.com/adafruit/Adafruit_Learning_System_Guides/blob/master/Raspberry_Pi_DS18B20_Temperature_Sensing/thermometer.py
 '''
-
-#! /usr/bin/env python
 
 import rospy
 import glob
