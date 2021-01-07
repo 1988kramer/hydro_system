@@ -13,7 +13,8 @@ import numpy as np
 import threading
 from datetime import datetime
 from hydro_system.msg import TempMsg
-from hydro_system.msg import SaveTempLog
+from hydro_system.msg import SaveLog
+from std_srvs import Empty
 
 base_dir = '/sys/bus/w1/devices/'
 device_dir = glob.glob(base_dir + '28*')[0]
@@ -53,7 +54,7 @@ def publish_temp():
 
     # dump log to file at least weekly
     if log[-1][0] - log[0][0] > 604800.0: 
-      req = SaveTempLog()
+      req = Empty()
       save_log(req)
 
 
@@ -66,7 +67,7 @@ def publish_temp():
 
 if __name__ == '__main__':
 
-  rospy.Service('save_temp_log', SaveTempLog, save_log)
+  rospy.Service('save_temp_log', Empty, save_log)
 
   while not rospy.is_shutdown():
     try:
