@@ -50,7 +50,7 @@ def publish_temp():
     seq += 1
 
     # log roughly once per minute
-    if len(log) == 0 or stamp.to_sec() - log[-1][0] > 1.0: 
+    if len(log) == 0 or stamp.to_sec() - log[-1][0] > 60.0: 
       with lock:
         log.append([stamp.to_sec(),temp])
 
