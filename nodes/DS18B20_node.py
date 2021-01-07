@@ -9,12 +9,18 @@ Uses code from the example found at https://github.com/adafruit/Adafruit_Learnin
 
 import rospy
 import glob
+import numpy as np
+import threading
+from datetime import datetime
 from hydro_system.msg import TempMsg
+from hydro_system.msg import SaveTempLog
 
 base_dir = '/sys/bus/w1/devices/'
 device_dir = glob.glob(base_dir + '28*')[0]
 device_file = device_dir + '/w1_slave'
 temp_pub = rospy.Publisher('/temp', TempMsg, queue_size=1)
+log = []
+lock = threading.lock()
 seq = 0
 
 def read_temp_raw():
@@ -32,14 +38,35 @@ def publish_temp():
   if equals_pos != -1:
     temp_string = lines[1][equals_pos+2:]
     temp = float(temp_string) / 1000.0
+    stamp = rospy.Time.now()
     temp_msg = TempMsg()
     temp_msg.temperature = temp
-    temp_msg.header.stamp = rospy.Time.now() 
+    temp_msg.header.stamp = stamp
     msg.header.seq = seq
     temp_pub.publish(temp)
     seq += 1
 
+    # log roughly once per minute
+    if len(log) == 0 or stamp.to_sec - log[-1] > 60.0: 
+      with lock:
+        log.append([stamp.to_sec,temp])
+
+    # dump log to file at least weekly
+    if log[-1][0] - log[0][0] > 604800.0: 
+      req = SaveTempLog()
+      save_log(req)
+
+
+  def save_log(req):
+    with lock:
+      log_mat = np.array(log)
+      log = []
+    date_str = datetime.today().strftime('%d_%m_%Y')
+    np.save('/home/pi/logs/temp_' + date_str + '.npy', log_mat)
+
 if __name__ == '__main__':
+
+  rospy.Service('save_temp_log', SaveTempLog, save_log)
 
   while not rospy.is_shutdown():
     try:
