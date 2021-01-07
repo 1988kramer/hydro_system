@@ -13,15 +13,14 @@ import numpy as np
 import threading
 from datetime import datetime
 from hydro_system.msg import TempMsg
-from hydro_system.msg import SaveLog
-from std_srvs import Empty
+from std_srvs.srv import Empty
 
 base_dir = '/sys/bus/w1/devices/'
 device_dir = glob.glob(base_dir + '28*')[0]
 device_file = device_dir + '/w1_slave'
 temp_pub = rospy.Publisher('/temp', TempMsg, queue_size=1)
 log = []
-lock = threading.lock()
+lock = threading.Lock()
 seq = 0
 
 def read_temp_raw():
@@ -58,19 +57,19 @@ def publish_temp():
       save_log(req)
 
 
-  def save_log(req):
-    with lock:
-      log_mat = np.array(log)
-      log = []
-    date_str = datetime.today().strftime('%d_%m_%Y')
-    np.save('/home/pi/logs/temp_' + date_str + '.npy', log_mat)
+def save_log(req):
+  with lock:
+    log_mat = np.array(log)
+    log = []
+  date_str = datetime.today().strftime('%d_%m_%Y')
+  np.save('/home/pi/logs/temp_' + date_str + '.npy', log_mat)
 
 if __name__ == '__main__':
-
+  rospy.init_node('temp', anonymous=True)
   rospy.Service('save_temp_log', Empty, save_log)
 
   while not rospy.is_shutdown():
     try:
       publish_temp()
-    except: rospy.ROSInterruptException:
+    except rospy.ROSInterruptException:
       pass
