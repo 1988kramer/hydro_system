@@ -30,7 +30,7 @@ def command_publisher():
   else: 
     speed -= 1
 
-  msg = MotorHatCmd[]
+  msg = MotorHatCmd()
   msg.commands = [direction, 'release', 'release', 'release']
   msg.speeds = [speed, 0, 0, 0]
 
