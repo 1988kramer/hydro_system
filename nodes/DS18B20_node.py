@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
 '''
 ROS node for taking readings from the DS18B20 temperature sensor on 
