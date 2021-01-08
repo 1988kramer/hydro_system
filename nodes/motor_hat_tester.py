@@ -36,7 +36,7 @@ def command_publisher():
 
   command_pub.publish(msg)
 
-  rospy.sleep(0.1)
+  rospy.sleep(0.05)
 
 
 
