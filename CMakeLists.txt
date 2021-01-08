@@ -12,6 +12,7 @@ add_message_files(
   FILES
   PhMsg.msg
   TempMsg.msg
+  MotorHatCmd.msg
 )
 
 add_service_files(
