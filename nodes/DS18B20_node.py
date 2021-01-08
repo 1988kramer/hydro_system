@@ -15,67 +15,68 @@ from datetime import datetime
 from hydro_system.msg import TempMsg
 from std_srvs.srv import Empty, EmptyResponse
 
-base_dir = '/sys/bus/w1/devices/'
-device_dir = glob.glob(base_dir + '28*')[0]
-device_file = device_dir + '/w1_slave'
-temp_pub = rospy.Publisher('/temp', TempMsg, queue_size=1)
-log = []
-lock = threading.Lock()
-seq = 0
+class DS18B20_Node:
+  def __init__(self):
 
-def read_temp_raw():
-  f = open(device_file, 'r')
-  lines = f.readlines()
-  f.close()
-  return lines
+    rospy.init_node('temp', anonymous=True)
+    self.srv = rospy.Service('save_temp_log', Empty, save_log)
 
-def publish_temp():
-  global seq
-  global log
-  global lock
-  lines = read_temp_raw()
-  while lines[0].strip()[-3:] != 'YES':
-    rospy.Rate(5).sleep()
+    base_dir = '/sys/bus/w1/devices/'
+    device_dir = glob.glob(base_dir + '28*')[0]
+    self.device_file = device_dir + '/w1_slave'
+    self.temp_pub = rospy.Publisher('/temp', TempMsg, queue_size=1)
+    self.log = []
+    self.lock = threading.Lock()
+    self.seq = 0
+
+  def read_temp_raw(self):
+    f = open(self.device_file, 'r')
+    lines = f.readlines()
+    f.close()
+    return lines
+
+  def publish_temp(self):
     lines = read_temp_raw()
-  equals_pos = lines[1].find('t=')
-  if equals_pos != -1:
-    temp_string = lines[1][equals_pos+2:]
-    temp = float(temp_string) / 1000.0
-    stamp = rospy.Time.now()
-    temp_msg = TempMsg()
-    temp_msg.temperature = temp
-    temp_msg.header.stamp = stamp
-    temp_msg.header.seq = seq
-    temp_pub.publish(temp_msg)
-    seq += 1
+    while lines[0].strip()[-3:] != 'YES':
+      rospy.Rate(5).sleep()
+      lines = read_temp_raw()
+    equals_pos = lines[1].find('t=')
+    if equals_pos != -1:
+      temp_string = lines[1][equals_pos+2:]
+      temp = float(temp_string) / 1000.0
+      stamp = rospy.Time.now()
+      temp_msg = TempMsg()
+      temp_msg.temperature = temp
+      temp_msg.header.stamp = stamp
+      temp_msg.header.seq = self.seq
+      self.temp_pub.publish(temp_msg)
+      self.seq += 1
 
-    # log roughly once per minute
-    if len(log) == 0 or stamp.to_sec() - log[-1][0] > 60.0: 
-      with lock:
-        log.append([stamp.to_sec(),temp])
+      # log roughly once per minute
+      if len(self.log) == 0 or stamp.to_sec() - self.log[-1][0] > 60.0: 
+        with self.lock:
+          self.log.append([stamp.to_sec(),temp])
 
-    # dump log to file at least weekly
-    if log[-1][0] - log[0][0] > 604800.0: 
-      req = Empty()
-      save_log(req)
+      # dump log to file at least weekly
+      if self.log[-1][0] - self.log[0][0] > 604800.0: 
+        req = Empty()
+        self.save_log(req)
 
 
-def save_log(req):
-  global log
-  global lock
-  with lock:
-    log_mat = np.array(log)
-    log = []
-  date_str = datetime.today().strftime('%d_%m_%Y')
-  np.save('/home/pi/logs/temperature_' + date_str + '.npy', log_mat)
-  return []
+  def save_log(self,req):
+    with self.lock:
+      log_mat = np.array(self.log)
+      log = []
+    date_str = datetime.today().strftime('%d_%m_%Y')
+    np.save('/home/pi/logs/temperature_' + date_str + '.npy', log_mat)
+    return []
 
 if __name__ == '__main__':
-  rospy.init_node('temp', anonymous=True)
-  rospy.Service('save_temp_log', Empty, save_log)
+  
+  node = DS18B20_Node()
 
   while not rospy.is_shutdown():
     try:
-      publish_temp()
+      node.publish_temp()
     except rospy.ROSInterruptException:
       pass
