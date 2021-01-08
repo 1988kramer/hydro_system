@@ -21,6 +21,7 @@ class MotorHatNode:
   def shutdown(self, sig, frame):
     for i in range(self.num_motors):
       self.motor_hat.getMotor(i+1).run(Adafruit_MotorHAT.RELEASE)
+      self.motor_hat.getMater(i+1).setSpeed(0)
     rospy.loginfo('motor hat node shutting down')
     rospy.signal_shutdown('SIGINT received (CTRL+C)')
     sys.exit()
