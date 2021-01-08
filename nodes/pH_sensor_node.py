@@ -21,6 +21,8 @@ import threading
 class pH_Node():
 
   def __init__(self):
+    rospy.init_node('pH', anonymous=True)
+
     self.ph_pub = rospy.Publisher('/pH', PhMsg, queue_size=1)
     self.seq = 0
     self.bus = smbus.SMBus(1)
