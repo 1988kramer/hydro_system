@@ -19,7 +19,7 @@ class DS18B20_Node:
   def __init__(self):
 
     rospy.init_node('temp', anonymous=True)
-    self.srv = rospy.Service('save_temp_log', Empty, save_log)
+    self.srv = rospy.Service('save_log', Empty, save_log)
 
     base_dir = '/sys/bus/w1/devices/'
     device_dir = glob.glob(base_dir + '28*')[0]

@@ -4,8 +4,6 @@
 ROS node for taking readings from the EZO pH circuit from Atlas Scientific via i2c
 
 borrows code from https://github.com/disaster-robotics-proalertas/atlas_ros
-
-need to add temperature compensation!!!
 '''
 
 import rospy
@@ -23,7 +21,6 @@ class pH_Node():
   def __init__(self):
     rospy.init_node('pH', anonymous=True)
 
-    self.ph_pub = rospy.Publisher('/pH', PhMsg, queue_size=1)
     self.seq = 0
     self.bus = smbus.SMBus(1)
     self.temp = 25.0
@@ -32,9 +29,19 @@ class pH_Node():
     self.i2c_lock = threading.Lock()
     self.log_lock = threading.Lock()
 
-    self.temp_sub = rospy.Subscriber('/water_temp', TempMsg, temp_callback, queue_size=1)
-    self.calib_srv = rospy.Service('calibrate_ph', CalibratePh, calibrate_ph)
-    self.log_srv = rospy.Service('save_ph_log', Empty, save_log)
+    self.ph_pub = rospy.Publisher('/pH', 
+                                  PhMsg, 
+                                  queue_size=1)
+    self.temp_sub = rospy.Subscriber('/water_temp', 
+                                     TempMsg, 
+                                     self.temp_callback, 
+                                     queue_size=1)
+    self.calib_srv = rospy.Service('calibrate_ph', 
+                                   CalibratePh, 
+                                   self.calibrate_ph)
+    self.log_srv = rospy.Service('save_log', 
+                                 Empty, 
+                                 self.save_log)
 
 
   def read_line(self):
@@ -86,14 +93,14 @@ class pH_Node():
     seq += 1
 
     # log roughly once per minute
-    if len(self.log) == 0 or stamp.to_sec - self.log[-1] > 60.0: 
+    if len(self.log) == 0 or stamp.to_sec() - self.log[-1] > 60.0: 
       with self.log_lock:
-        self.log.append([stamp.to_sec,temp])
+        self.log.append([stamp.to_sec(),temp])
 
     # dump log to file at least weekly
-    if self.log[-1][0] - self.log[0][0] > 604800.0: 
+    if self.log[-1][0] - self.log[-2][0] > 604800.0: 
       req = Empty()
-      save_log(req)
+      self.save_log(req)
 
 
   def save_log(self, req):
@@ -152,5 +159,5 @@ if __name__ == '__main__':
   while not rospy.is_shutdown():
     try:
       pH_Node.publish_ph()
-    except: rospy.ROSInterruptException:
+    except rospy.ROSInterruptException:
       pass
