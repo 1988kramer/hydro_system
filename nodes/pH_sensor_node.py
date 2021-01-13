@@ -58,7 +58,7 @@ class pH_Node:
   def string_to_bytes(self, cmd):
     converted = []
     for b in cmd:
-      convert.append(ord(b))
+      converted.append(ord(b))
     return converted
 
   def send_cmd(self, cmd):
@@ -66,14 +66,14 @@ class pH_Node:
     end = cmd[1:] + '\00'
     end = self.string_to_bytes(end)
     try:
-      self.bus.write_12c_block_data(self.sensor_address, start, end)
+      self.bus.write_i2c_block_data(self.sensor_address, start, end)
       return True
     except IOError as e:
       print('Error ' + e.strerror + ' occurred while writing to address ' + str(self.sensor_address))
       return None
 
   def get_data(self):
-    send_cmd('RT,%.2f' % self.temp)
+    self.send_cmd('RT,%.2f' % self.temp)
     rospy.sleep(1.0)
     line = self.read_line()
 
@@ -82,7 +82,7 @@ class pH_Node:
 
   def publish_ph(self):
     with self.i2c_lock:
-      data = self.get_data()
+      data = self.get_data()  
     rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],temp))
     pH_msg = PhMsg()
     stamp = rospy.Time.now()
@@ -154,10 +154,10 @@ class pH_Node:
 
 if __name__ == '__main__':
 
-  node = pH_Node()
+  pH_node = pH_Node()
 
   while not rospy.is_shutdown():
     try:
-      pH_Node.publish_ph()
+      pH_node.publish_ph()
     except rospy.ROSInterruptException:
       pass
