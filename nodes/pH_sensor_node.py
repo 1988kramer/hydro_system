@@ -84,22 +84,22 @@ class pH_Node:
     with self.i2c_lock:
       data = self.get_data()  
     if data is not None:
-      rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],temp))
+      #rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],self.temp))
       pH_msg = PhMsg()
       stamp = rospy.Time.now()
       pH_msg.header.stamp = stamp
-      pH_msg.header.seq = seq
+      pH_msg.header.seq = self.seq
       pH_msg.pH = data[0]
       self.ph_pub.publish(pH_msg)
-      seq += 1
+      self.seq += 1
 
       # log roughly once per minute
-      if len(self.log) == 0 or stamp.to_sec() - self.log[-1] > 60.0: 
+      if len(self.log) == 0 or stamp.to_sec() - self.log[-1][0] > 0.1: 
         with self.log_lock:
-          self.log.append([stamp.to_sec(),temp])
+          self.log.append([stamp.to_sec(),data[0]])
 
       # dump log to file at least weekly
-      if self.log[-1][0] - self.log[-2][0] > 604800.0: 
+      if len(self.log) != 0 and self.log[-1][0] - self.log[0][0] > 604800.0: 
         req = Empty()
         self.save_log(req)
     else:
