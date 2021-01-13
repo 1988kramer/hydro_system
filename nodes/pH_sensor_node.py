@@ -10,7 +10,7 @@ import rospy
 import numpy as np
 from hydro_system.msg import PhMsg, TempMsg
 from hydro_system.srv import CalibratePh, CalibratePhResponse
-from std_srvs import Empty
+from std_srvs.srv import Empty
 import smbus
 from datetime import datetime
 import threading
@@ -80,7 +80,7 @@ class pH_Node():
     return line
 
 
-  def publish_ph():
+  def publish_ph(self):
     with self.i2c_lock:
       data = self.get_data()
     rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],temp))
