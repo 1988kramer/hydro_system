@@ -16,7 +16,7 @@ from datetime import datetime
 import threading
 
 
-class pH_Node():
+class pH_Node:
 
   def __init__(self):
     rospy.init_node('pH', anonymous=True)
