@@ -74,7 +74,7 @@ class pH_Node:
 
   def get_data(self):
     self.send_cmd('R')#T,%.2f' % self.temp)
-    rospy.sleep(1.0)
+    rospy.sleep(0.9)
     line = self.read_line()
 
     return line
@@ -121,6 +121,8 @@ class pH_Node:
       rospy.loginfo('clearing pH calibration data')
       with self.i2c_lock:
         self.send_cmd('Cal,clear')
+        rospy.sleep(0.3)
+        self.read_line()
       return CalibratePhResponse('Calibration completed successfully')
     elif req.type.lower() == 'mid':
       rospy.loginfo('Mid point calibration: place sensor probe in pH 7 reference solution and wait for readings to stabilize.')
@@ -146,6 +148,8 @@ class pH_Node:
         meas_idx = (meas_idx + 1) % window_size
 
       self.send_cmd('Cal,%s,%d' % (req.type,req.point))
+      rospy.sleep(0.9)
+      self.read_line()
     return CalibratePhResponse('Calibration completed successfully')
 
 
