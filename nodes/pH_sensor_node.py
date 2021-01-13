@@ -24,7 +24,7 @@ class pH_Node():
     self.seq = 0
     self.bus = smbus.SMBus(1)
     self.temp = 25.0
-    self.sensor_address = 66 # check and verify this
+    self.sensor_address = 0x63 # check and verify this
     self.log = []
     self.i2c_lock = threading.Lock()
     self.log_lock = threading.Lock()
