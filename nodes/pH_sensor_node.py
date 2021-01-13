@@ -83,24 +83,27 @@ class pH_Node:
   def publish_ph(self):
     with self.i2c_lock:
       data = self.get_data()  
-    rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],temp))
-    pH_msg = PhMsg()
-    stamp = rospy.Time.now()
-    pH_msg.header.stamp = stamp
-    pH_msg.header.seq = seq
-    pH_msg.pH = data[0]
-    self.ph_pub.publish(pH_msg)
-    seq += 1
+    if data is not None:
+      rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],temp))
+      pH_msg = PhMsg()
+      stamp = rospy.Time.now()
+      pH_msg.header.stamp = stamp
+      pH_msg.header.seq = seq
+      pH_msg.pH = data[0]
+      self.ph_pub.publish(pH_msg)
+      seq += 1
 
-    # log roughly once per minute
-    if len(self.log) == 0 or stamp.to_sec() - self.log[-1] > 60.0: 
-      with self.log_lock:
-        self.log.append([stamp.to_sec(),temp])
+      # log roughly once per minute
+      if len(self.log) == 0 or stamp.to_sec() - self.log[-1] > 60.0: 
+        with self.log_lock:
+          self.log.append([stamp.to_sec(),temp])
 
-    # dump log to file at least weekly
-    if self.log[-1][0] - self.log[-2][0] > 604800.0: 
-      req = Empty()
-      self.save_log(req)
+      # dump log to file at least weekly
+      if self.log[-1][0] - self.log[-2][0] > 604800.0: 
+        req = Empty()
+        self.save_log(req)
+    else:
+      rospy.loginfo('failed to get data')
 
 
   def save_log(self, req):
