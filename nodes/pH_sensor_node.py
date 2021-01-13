@@ -53,7 +53,8 @@ class pH_Node:
     respones = [i for i in response if not i == '\00']
     char_list = list(map(lambda x: chr(x & ~0x80), list(response[1:])))
     char_list = ''.join(char_list).strip('\x00').split(',')
-    return [float(x) for x in char_list]
+    print(char_list)
+    return [float(x) for x in char_list if x != '']
 
   def string_to_bytes(self, cmd):
     converted = []
@@ -73,7 +74,7 @@ class pH_Node:
       return None
 
   def get_data(self):
-    self.send_cmd('RT,%.2f' % self.temp)
+    self.send_cmd('R')#T,%.2f' % self.temp)
     rospy.sleep(1.0)
     line = self.read_line()
 
@@ -84,7 +85,7 @@ class pH_Node:
     with self.i2c_lock:
       data = self.get_data()  
     if data is not None:
-      #rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],self.temp))
+      rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],self.temp))
       pH_msg = PhMsg()
       stamp = rospy.Time.now()
       pH_msg.header.stamp = stamp
