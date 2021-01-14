@@ -94,9 +94,14 @@ class pH_Node:
       self.seq += 1
 
       # log roughly once per minute
-      if len(self.log) == 0 or stamp.to_sec() - self.log[-1][0] > 0.1: 
+      '''
+      if len(self.log) == 0 or stamp.to_sec() - self.log[-1][0] > 60.0: 
         with self.log_lock:
           self.log.append([stamp.to_sec(),data[0]])
+      '''
+
+      # CHANGE THIS BACK WHEN TESTING COMPLETE
+      self.log.append([stamp.to_sec(), data[0]])
 
       # dump log to file at least weekly
       if len(self.log) != 0 and self.log[-1][0] - self.log[0][0] > 604800.0: 
