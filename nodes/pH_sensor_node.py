@@ -32,7 +32,7 @@ class pH_Node:
     self.ph_pub = rospy.Publisher('/pH', 
                                   PhMsg, 
                                   queue_size=1)
-    self.temp_sub = rospy.Subscriber('/water_temp', 
+    self.temp_sub = rospy.Subscriber('/temp', 
                                      TempMsg, 
                                      self.temp_callback, 
                                      queue_size=1)
@@ -73,7 +73,7 @@ class pH_Node:
       return None
 
   def get_data(self):
-    self.send_cmd('R')#T,%.2f' % self.temp)
+    self.send_cmd('RT,%.2f' % self.temp)
     rospy.sleep(0.9)
     line = self.read_line()
 
@@ -132,7 +132,7 @@ class pH_Node:
       rospy.loginfo('High point calibration: place sensor probe in pH 10 reference solution and wait for readings to stabilize.')
 
     # ensure last window_size measurements are stable
-    window_size = 3
+    window_size = 5
     meas = np.zeros(window_size)
     meas_idx = 0
     num_meas = 0
@@ -156,7 +156,6 @@ class pH_Node:
   def temp_callback(self, msg):
     with self.i2c_lock:
       self.temp = msg.temperature
-      rospy.loginfo('new temperature %.2f' % temp)
 
 
 if __name__ == '__main__':
