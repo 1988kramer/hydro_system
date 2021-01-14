@@ -19,7 +19,7 @@ class DS18B20_Node:
   def __init__(self):
 
     rospy.init_node('temp', anonymous=True)
-    self.srv = rospy.Service('save_log', Empty, save_log)
+    self.srv = rospy.Service('save_log', Empty, self.save_log)
 
     base_dir = '/sys/bus/w1/devices/'
     device_dir = glob.glob(base_dir + '28*')[0]
@@ -36,9 +36,9 @@ class DS18B20_Node:
     return lines
 
   def publish_temp(self):
-    lines = read_temp_raw()
+    lines = self.read_temp_raw()
     while lines[0].strip()[-3:] != 'YES':
-      rospy.Rate(5).sleep()
+      rospy.sleep(0.5)
       lines = read_temp_raw()
     equals_pos = lines[1].find('t=')
     if equals_pos != -1:
