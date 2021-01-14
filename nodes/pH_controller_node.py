@@ -69,6 +69,9 @@ class pH_ControllerNode():
       self.pH = self.pH + K * y_tilde
       self.pH_var = (1.0 - K) * pH_var
 
+      self.log.append([stamp, self.pH])
+
+    '''
     # if not waiting for a previous adjustment to take effect
     if stamp - self.last_adjust_time > self.adjust_duration:
 
@@ -87,6 +90,7 @@ class pH_ControllerNode():
           self.save_log(req)
 
       self.last_adjust_time = msg.header.stamp.to_sec()
+    '''
 
 
   # add ~1ml of pH up or down
@@ -116,7 +120,8 @@ class pH_ControllerNode():
     log_mat = np.array(self.log)
     self.log = []
     date_str = datetime.today().strftime('%d_%m_%Y')
-    np.save('/home/pi/logs/pH_command_' + date_str + '.npy', log_mat)
+    np.save('/home/pi/logs/pH_filtered_' + date_str + '.npy', log_mat)
+    #np.save('/home/pi/logs/pH_command_' + date_str + '.npy', log_mat)
     return []
 
 
