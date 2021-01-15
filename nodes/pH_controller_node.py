@@ -34,8 +34,8 @@ class pH_ControllerNode():
     self.set_point = 6.0
     self.range = 0.2
     self.pH = -1.0
-    self.q = 0.05
-    self.r = 0.05
+    self.q = 0.03
+    self.r = 0.15
     self.pH_var = 0.1
     self.last_t = 0.0
     self.log = []
