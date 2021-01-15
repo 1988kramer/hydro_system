@@ -19,7 +19,7 @@ class DS18B20_Node:
   def __init__(self):
 
     rospy.init_node('temp', anonymous=True)
-    self.srv = rospy.Service('save_log', Empty, self.save_log)
+    self.srv = rospy.Service('save_temp_log', Empty, self.save_log)
 
     base_dir = '/sys/bus/w1/devices/'
     device_dir = glob.glob(base_dir + '28*')[0]
@@ -51,11 +51,13 @@ class DS18B20_Node:
       temp_msg.header.seq = self.seq
       self.temp_pub.publish(temp_msg)
       self.seq += 1
-
+      '''
       # log roughly once per minute
       if len(self.log) == 0 or stamp.to_sec() - self.log[-1][0] > 60.0: 
         with self.lock:
           self.log.append([stamp.to_sec(),temp])
+      '''
+      self.log.append([stamp.to_sec(),temp])
 
       # dump log to file at least weekly
       if self.log[-1][0] - self.log[0][0] > 604800.0: 
