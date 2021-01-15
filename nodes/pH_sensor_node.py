@@ -97,11 +97,13 @@ class pH_Node:
       self.ph_pub.publish(pH_msg)
       self.seq += 1
 
+      self.log.append([stamp.to_sec(), data[0]])
+      '''
       # log roughly once per minute
       if len(self.log) == 0 or stamp.to_sec() - self.log[-1][0] > 60.0: 
         with self.log_lock:
           self.log.append([stamp.to_sec(),data[0]])
-
+      '''
       # dump log to file at least weekly
       if len(self.log) != 0 and self.log[-1][0] - self.log[0][0] > 604800.0: 
         req = Empty()

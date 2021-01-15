@@ -51,12 +51,14 @@ class DS18B20_Node:
       temp_msg.header.seq = self.seq
       self.temp_pub.publish(temp_msg)
       self.seq += 1
-      
+
+      self.log.append([stamp.to_sec(),temp])
+      '''
       # log roughly once per minute
       if len(self.log) == 0 or stamp.to_sec() - self.log[-1][0] > 60.0: 
         with self.lock:
           self.log.append([stamp.to_sec(),temp])
-
+      '''
       # dump log to file at least weekly
       if self.log[-1][0] - self.log[0][0] > 604800.0: 
         req = Empty()
