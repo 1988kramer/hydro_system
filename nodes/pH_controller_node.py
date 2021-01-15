@@ -41,7 +41,7 @@ class pH_ControllerNode():
     self.log = []
     self.lock = threading.Lock()
     self.last_adjust_time = 0.0
-    self.adjust_duration = 7200.0
+    self.adjust_duration = 60.0 # 7200.0
 
     self.stop_msg = MotorHatCmd()
     self.stop_msg.commands = ['release'] * 4
@@ -71,28 +71,28 @@ class pH_ControllerNode():
       self.pH = self.pH + K * y_tilde
       self.pH_var = (1.0 - K) * self.pH_var
 
-      self.log.append([stamp, self.pH])
-
-    '''
     # if not waiting for a previous adjustment to take effect
     if stamp - self.last_adjust_time > self.adjust_duration:
 
-      # if pH estimate is significantly higher than the set point add pH down
       with lock:
-        if self.pH - self.set_point > self.range:
-          self.adjust(-1.0)
-          self.log.append([stamp,-1.0])
-        # if the pH estimate is significantly lower than the set point add pH up
-        else:
-          self.adjust(1.0)
-          self.log.append([stamp,1.0])
+        diff = self.pH - self.set_point
+        # if pH estimate outside the range
+        if abs(diff) > self.range:
+          # if pH estimate is higher than the range add pH down
+          if diff > 0.0:
+            self.adjust(-1.0)
+            self.log.append([stamp,-1.0])
+          # if the pH estimate is significantly lower than the set point add pH up
+          else:
+            self.adjust(1.0)
+            self.log.append([stamp,1.0])
 
         if len(self.log) > 0 and self.log[-1][0] - self.log[-2][0] > 604800.0:
           req = Empty()
           self.save_log(req)
 
       self.last_adjust_time = msg.header.stamp.to_sec()
-    '''
+    
 
 
   # add ~1ml of pH up or down
