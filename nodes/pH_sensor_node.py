@@ -24,6 +24,10 @@ class pH_Node:
     self.seq = 0
     self.bus = smbus.SMBus(1)
     self.temp = 25.0
+    self.temp_var = 0.1
+    self.q = 0.01
+    self.r = 0.1
+    self.last_t = -1.0
     self.sensor_address = 0x63 # check and verify this
     self.log = []
     self.i2c_lock = threading.Lock()
@@ -159,8 +163,22 @@ class pH_Node:
 
 
   def temp_callback(self, msg):
+    stamp = msg.header.stamp.to_sec()
+    if self.last_t == -1.0:
+      temp_hat = msg.temperature
+      self.last_t = stamp
+    else:
+      dt = stamp - self.last_t
+      self.last_t = stamp
+      y_tilde = msg.temperature - self.temp
+      temp_var_hat = self.temp_var + self.q * dt
+      S = temp_var_hat + self.r
+      K = temp_var_hat / S
+      temp_hat = self.temp + K * y_tilde
+      self.temp_var = (1.0 - K) * self.temp_var
+
     with self.i2c_lock:
-      self.temp = msg.temperature
+      self.temp = temp_hat
 
 
 if __name__ == '__main__':
