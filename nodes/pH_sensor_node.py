@@ -39,7 +39,7 @@ class pH_Node:
     self.calib_srv = rospy.Service('calibrate_ph', 
                                    CalibratePh, 
                                    self.calibrate_ph)
-    self.log_srv = rospy.Service('save_log', 
+    self.log_srv = rospy.Service('save_pH_log', 
                                  Empty, 
                                  self.save_log)
 
