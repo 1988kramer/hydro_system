@@ -8,8 +8,9 @@ import rospy
 import numpy as np 
 from hydro_system.msg import PhMsg, MotorHatCmd
 from hydro_system.srv import ChangeSetPoint, ChangeSetPointResponse
-from std_srv import Empty
+from std_srvs.srv import Empty
 import threading
+from datetime import datetime
 
 class pH_ControllerNode():
 
@@ -18,16 +19,17 @@ class pH_ControllerNode():
 
     self.motor_cmd_pub = rospy.Publisher('/motor_hat_cmd', 
                                          MotorHatCmd, 
-                                         queue=1)
+                                         queue_size=1)
     self.pH_sub = rospy.Subscriber('/pH', 
                                    PhMsg, 
-                                   self.ph_callback)
+                                   self.ph_callback,
+                                   queue_size=1)
     self.set_point_srv = rospy.Service('change_set_point', 
                                        ChangeSetPoint, 
                                        self.change_set_point)
-    self.log_srv = rospy.Service('save_log',
+    self.log_srv = rospy.Service('save_controller_log',
                                  Empty,
-                                 self.log_commands)
+                                 self.save_log)
 
     self.set_point = 6.0
     self.range = 0.2
@@ -63,11 +65,11 @@ class pH_ControllerNode():
       dt = stamp - self.last_t
       y_tilde = msg.pH - self.pH
       self.last_t = stamp
-      pH_var_hat = pH_var + self.q * dt
+      pH_var_hat = self.pH_var + self.q * dt
       S = pH_var_hat + self.r
       K = pH_var_hat / S
       self.pH = self.pH + K * y_tilde
-      self.pH_var = (1.0 - K) * pH_var
+      self.pH_var = (1.0 - K) * self.pH_var
 
       self.log.append([stamp, self.pH])
 
