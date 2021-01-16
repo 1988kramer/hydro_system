@@ -21,7 +21,7 @@ def command_publisher():
   msg.commands = ['release'] * 4
   msg.commands[motor] = 'forward'
   msg.speeds = [0] * 4
-  msg.speeds[motor] = 128
+  msg.speeds[motor] = 100
 
   command_pub.publish(msg)
 
