@@ -47,13 +47,13 @@ class pH_ControllerNode():
     self.stop_msg.commands = ['release'] * 4
     self.stop_msg.speeds = [0] * 4
 
-    self.up_msg = MotorHatCmd()
-    self.up_msg.speeds = [128, 0, 0, 0]
-    self.up_msg.commands = ['forward', 'release', 'release', 'release']
-
     self.down_msg = MotorHatCmd()
-    self.down_msg.speeds = [0, 128, 0, 0]
-    self.down_msg.commands = ['release', 'forward', 'release', 'release']
+    self.down_msg.speeds = [128, 0, 0, 0]
+    self.down_msg.commands = ['forward', 'release', 'release', 'release']
+
+    self.up_msg = MotorHatCmd()
+    self.up_msg.speeds = [0, 128, 0, 0]
+    self.up_msg.commands = ['release', 'forward', 'release', 'release']
 
 
   def ph_callback(self, msg):
@@ -74,20 +74,22 @@ class pH_ControllerNode():
     # if not waiting for a previous adjustment to take effect
     if stamp - self.last_adjust_time > self.adjust_duration:
 
-      with lock:
+      with self.lock:
         diff = self.pH - self.set_point
         # if pH estimate outside the range
         if abs(diff) > self.range:
           # if pH estimate is higher than the range add pH down
           if diff > 0.0:
+            rospy.logerr('adjusting down')
             self.adjust(-1.0)
             self.log.append([stamp,-1.0])
           # if the pH estimate is significantly lower than the set point add pH up
           else:
+            rospy.logerr('adjusting up')
             self.adjust(1.0)
             self.log.append([stamp,1.0])
 
-        if len(self.log) > 0 and self.log[-1][0] - self.log[-2][0] > 604800.0:
+        if len(self.log) > 0 and self.log[-1][0] - self.log[0][0] > 604800.0:
           req = Empty()
           self.save_log(req)
 
@@ -99,13 +101,15 @@ class pH_ControllerNode():
   def adjust(self, direction):
 
     if direction == 1.0:
-      self.motor_cmd_pub(self.up_msg)
+      rospy.logerr('motor up command')
+      self.motor_cmd_pub.publish(self.up_msg)
     else:
-      self.motor_cmd_pub(self.down_msg)
+      rospy.logerr('motor down command')
+      self.motor_cmd_pub.publish(self.down_msg)
 
     rospy.sleep(2.0)
 
-    self.motor_cmd_pub(self.stop_msg)
+    self.motor_cmd_pub.publish(self.stop_msg)
 
 
   def change_set_point(self, req):
