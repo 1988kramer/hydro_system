@@ -2,10 +2,10 @@
 
   <node pkg="hydro_system" type="DS18B20_node.py" name="water_temp_sensor" />
 
-  <node pkg="hydro_system" type="pH_sensor_node.py" name="pH_sensor" />
+  <node pkg="hydro_system" type="pH_sensor_node.py" name="pH_sensor" output="screen" />
 
   <node pkg="hydro_system" type="motor_hat_node.py" name="motor_hat" />
 
-  <node pkg="hydro_system" type="motor_hat_tester.py" name="motor_tester" />
+  <node pkg="hydro_system" type="pH_controller_node.py" name="pH_controller" output="screen" />
 
 </launch>
