@@ -46,6 +46,10 @@ class pH_Node:
     self.log_srv = rospy.Service('save_pH_log', 
                                  Empty, 
                                  self.save_log)
+    rospy.sleep(0.1)
+    self.send_cmd('L,0')
+    rospy.sleep(0.3)
+    self.read_line()
 
 
   def read_line(self):
