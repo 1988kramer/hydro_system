@@ -10,25 +10,30 @@ import rospy
 import os
 
 class Timelapse:
-  def __init__():
+  def __init__(self):
+    rospy.init_node('timelapse', anonymous=True)
     self.camera = cv2.VideoCapture(0)
-    self.interval = rospy.get_param('interval', 600) # default 10 min interval
-    self.intensity_thresh = rospy.get_param('thresh', 32)
-    self.last_time = -1.0
+    self.interval = 600 # default 10 min interval
+    self.intensity_thresh = 32
 
-  def take_image():
+  def take_image(self):
+    start_time = rospy.Time.now()
     _, image = self.camera.read()
 
     # check if average intensity is above threshold
     gray_im = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     mean = cv2.mean(gray_im)[0]
+    rospy.loginfo('mean image intensity: %d' % mean)
 
     stamp = rospy.Time.now().to_sec()
 
-    if mean >= self.intensity_thresh and stamp - self.last_time > self.interval:
-      self.last_time = stamp
-      filename = '/logs/images/%d.jpg' % int(stamp)
+    if mean >= self.intensity_thresh:
+      rospy.loginfo('saving image')
+      filename = '/home/pi/logs/images/%d.jpg' % int(stamp)
       cv2.imwrite(filename, image) 
+
+    duration = rospy.Time.now() - start_time
+    rospy.sleep(self.interval - duration.to_sec())
 
 
 if __name__ == '__main__':
