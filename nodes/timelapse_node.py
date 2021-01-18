@@ -14,6 +14,7 @@ class Timelapse:
     self.camera = cv2.VideoCapture(0)
     self.interval = rospy.get_param('interval', 600) # default 10 min interval
     self.intensity_thresh = rospy.get_param('thresh', 32)
+    self.last_time = -1.0
 
   def take_image():
     _, image = self.camera.read()
@@ -22,9 +23,11 @@ class Timelapse:
     gray_im = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     mean = cv2.mean(gray_im)[0]
 
-    if mean >= self.intensity_thresh:
-      stamp = rospy.Time.now()
-      filename = '/logs/images/%d.jpg' % int(stamp.to_sec())
+    stamp = rospy.Time.now().to_sec()
+
+    if mean >= self.intensity_thresh and stamp - self.last_time > self.interval:
+      self.last_time = stamp
+      filename = '/logs/images/%d.jpg' % int(stamp)
       cv2.imwrite(filename, image) 
 
 
