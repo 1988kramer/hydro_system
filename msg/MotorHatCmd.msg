@@ -1,2 +1,3 @@
-string[] commands
-int16[] speeds
+string command
+int16 motor
+int16 speed

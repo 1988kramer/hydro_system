@@ -43,17 +43,18 @@ class pH_ControllerNode():
     self.last_adjust_time = 0.0
     self.adjust_duration = 60.0 # 7200.0
 
+    self.up_motor = 1
+    self.down_motor = 0
+
+    self.start_msg = MotorHatCmd()
+    self.start_msg.motor = 0
+    self.start_msg.speed = 128
+    self.start_msg.command = 'forward'
+
     self.stop_msg = MotorHatCmd()
-    self.stop_msg.commands = ['release'] * 4
-    self.stop_msg.speeds = [0] * 4
-
-    self.down_msg = MotorHatCmd()
-    self.down_msg.speeds = [128, 0, 0, 0]
-    self.down_msg.commands = ['forward', 'release', 'release', 'release']
-
-    self.up_msg = MotorHatCmd()
-    self.up_msg.speeds = [0, 128, 0, 0]
-    self.up_msg.commands = ['release', 'forward', 'release', 'release']
+    self.stop_msg.motor = 0
+    self.stop_msg.speed = 0
+    self.stop_msg.command = 'release'
 
 
   def ph_callback(self, msg):
@@ -81,12 +82,12 @@ class pH_ControllerNode():
           # if pH estimate is higher than the range add pH down
           if diff > 0.0:
             rospy.logerr('adjusting down')
-            self.adjust(-1.0)
+            self.adjust(self.down_motor)
             self.log.append([stamp,-1.0])
           # if the pH estimate is significantly lower than the set point add pH up
           else:
             rospy.logerr('adjusting up')
-            self.adjust(1.0)
+            self.adjust(self.up_motor)
             self.log.append([stamp,1.0])
 
         if len(self.log) > 0 and self.log[-1][0] - self.log[0][0] > 86400.0:
@@ -98,17 +99,18 @@ class pH_ControllerNode():
 
 
   # add ~1ml of pH up or down
-  def adjust(self, direction):
+  def adjust(self, motor):
+
+    self.start_msg.motor = motor
+    self.stop_msg.motor = motor
 
     if direction == 1.0:
       rospy.logerr('motor up command')
-      self.motor_cmd_pub.publish(self.up_msg)
     else:
       rospy.logerr('motor down command')
-      self.motor_cmd_pub.publish(self.down_msg)
 
+    self.motor_cmd_pub.publish(self.start_msg)
     rospy.sleep(2.0)
-
     self.motor_cmd_pub.publish(self.stop_msg)
 
 

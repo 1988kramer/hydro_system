@@ -27,14 +27,14 @@ class MotorHatNode:
     sys.exit()
 
   def cmd_callback(self, msg):
-    for i in range(self.num_motors):
-      if msg.commands[i] == 'forward':
-        self.motor_hat.getMotor(i+1).run(Adafruit_MotorHAT.FORWARD)
-      elif msg.commands[i] == 'backward':
-        self.motor_hat.getMotor(i+1).run(Adafruit_MotorHAT.BACKWARD)
-      elif msg.commands[i] == 'release':
-        self.motor_hat.getMotor(i+1).run(Adafruit_MotorHAT.RELEASE)
-      self.motor_hat.getMotor(i+1).setSpeed(msg.speeds[i])
+    motor_num = msg.motor + 1
+    if msg.command == 'forward':
+      self.motor_hat.getMotor(motor_num).run(Adafruit_MotorHAT.FORWARD)
+    elif msg.command == 'backward':
+      self.motor_hat.getMotor(motor_num).run(Adafruit_MotorHAT.BACKWARD)
+    elif msg.commands == 'release':
+      self.motor_hat.getMotor(motor_num).run(Adafruit_MotorHAT.RELEASE)
+    self.motor_hat.getMotor(motor_num).setSpeed(msg.speed)
 
 if __name__ == '__main__':
   motor_hat_node = MotorHatNode()
