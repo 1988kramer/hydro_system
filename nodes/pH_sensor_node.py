@@ -14,6 +14,7 @@ from std_srvs.srv import Empty
 import smbus
 from datetime import datetime
 import threading
+import os
 
 
 class pH_Node:
@@ -108,8 +109,8 @@ class pH_Node:
         with self.log_lock:
           self.log.append([stamp.to_sec(),data[0]])
       '''
-      # dump log to file at least weekly
-      if len(self.log) != 0 and self.log[-1][0] - self.log[0][0] > 604800.0: 
+      # dump log to file at least daily
+      if len(self.log) != 0 and self.log[-1][0] - self.log[0][0] > 86400.0: 
         req = Empty()
         self.save_log(req)
     else:
@@ -120,8 +121,10 @@ class pH_Node:
     with self.log_lock:
       log_mat = np.array(self.log)
       self.log = []
-    date_str = datetime.today().strftime('%d_%m_%Y')
-    np.save('/home/pi/logs/pH_' + date_str + '.npy', log_mat)
+    date_str = datetime.today().strftime('%d_%m_%Y_%H_%M')
+    filename = '/home/pi/pH_' + date_str + '.npy'
+    np.save(filename, log_mat)
+    os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
     return []
 
 

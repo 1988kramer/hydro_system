@@ -89,7 +89,7 @@ class pH_ControllerNode():
             self.adjust(1.0)
             self.log.append([stamp,1.0])
 
-        if len(self.log) > 0 and self.log[-1][0] - self.log[0][0] > 604800.0:
+        if len(self.log) > 0 and self.log[-1][0] - self.log[0][0] > 86400.0:
           req = Empty()
           self.save_log(req)
 
@@ -125,9 +125,10 @@ class pH_ControllerNode():
   def save_log(self, req):
     log_mat = np.array(self.log)
     self.log = []
-    date_str = datetime.today().strftime('%d_%m_%Y')
-    np.save('/home/pi/logs/pH_filtered_' + date_str + '.npy', log_mat)
-    #np.save('/home/pi/logs/pH_command_' + date_str + '.npy', log_mat)
+    date_str = datetime.today().strftime('%d_%m_%Y_%H_%M')
+    filename = '/home/pi/logs/pH_command_' date_str + '.npy'
+    np.save(filename, log_mat)
+    os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
     return []
 
 

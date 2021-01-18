@@ -59,8 +59,8 @@ class DS18B20_Node:
         with self.lock:
           self.log.append([stamp.to_sec(),temp])
       '''
-      # dump log to file at least weekly
-      if self.log[-1][0] - self.log[0][0] > 604800.0: 
+      # dump log to file at least daily
+      if self.log[-1][0] - self.log[0][0] > 86400.0: 
         req = Empty()
         self.save_log(req)
 
@@ -69,8 +69,10 @@ class DS18B20_Node:
     with self.lock:
       log_mat = np.array(self.log)
       log = []
-    date_str = datetime.today().strftime('%d_%m_%Y')
-    np.save('/home/pi/logs/temperature_' + date_str + '.npy', log_mat)
+    date_str = datetime.today().strftime('%d_%m_%Y_%H_%M')
+    filename = '/home/pi/temperature_' + date_str + '.npy'
+    np.save(filename, log_mat)
+    os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
     return []
 
 if __name__ == '__main__':
