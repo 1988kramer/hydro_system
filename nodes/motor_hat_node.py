@@ -32,7 +32,7 @@ class MotorHatNode:
       self.motor_hat.getMotor(motor_num).run(Adafruit_MotorHAT.FORWARD)
     elif msg.command == 'backward':
       self.motor_hat.getMotor(motor_num).run(Adafruit_MotorHAT.BACKWARD)
-    elif msg.commands == 'release':
+    elif msg.command == 'release':
       self.motor_hat.getMotor(motor_num).run(Adafruit_MotorHAT.RELEASE)
     self.motor_hat.getMotor(motor_num).setSpeed(msg.speed)
 
