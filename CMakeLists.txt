@@ -10,8 +10,7 @@ find_package(catkin
 
 add_message_files(
   FILES
-  PhMsg.msg
-  TempMsg.msg
+  StampedFloatWithVariance.msg
   MotorHatCmd.msg
 )
 
