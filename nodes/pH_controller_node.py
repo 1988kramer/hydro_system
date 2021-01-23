@@ -6,7 +6,7 @@ ROS node for controlling pH in a hydroponics system
 
 import rospy
 import numpy as np 
-from hydro_system.msg import PhMsg, MotorHatCmd
+from hydro_system.msg import StampedFloatWithVariance, MotorHatCmd
 from hydro_system.srv import ChangeSetPoint, ChangeSetPointResponse
 from std_srvs.srv import Empty
 import threading
@@ -33,11 +33,11 @@ class pH_ControllerNode():
 
     self.set_point = 6.0
     self.range = 0.2
-    self.pH = -1.0
-    self.q = 0.03
-    self.r = 0.15
-    self.pH_var = 0.1
-    self.last_t = 0.0
+    #self.pH = -1.0
+    #self.q = 0.03
+    #self.r = 0.15
+    #self.pH_var = 0.1
+    #self.last_t = 0.0
     self.log = []
     self.lock = threading.Lock()
     self.last_adjust_time = 0.0
@@ -58,25 +58,12 @@ class pH_ControllerNode():
 
 
   def ph_callback(self, msg):
-    stamp = msg.header.stamp.to_sec()
-    if self.pH == -1.0:
-      self.pH = msg.pH
-      self.last_t = stamp
-    else:
-      dt = stamp - self.last_t
-      y_tilde = msg.pH - self.pH
-      self.last_t = stamp
-      pH_var_hat = self.pH_var + self.q * dt
-      S = pH_var_hat + self.r
-      K = pH_var_hat / S
-      self.pH = self.pH + K * y_tilde
-      self.pH_var = (1.0 - K) * self.pH_var
 
     # if not waiting for a previous adjustment to take effect
     if stamp - self.last_adjust_time > self.adjust_duration:
 
       with self.lock:
-        diff = self.pH - self.set_point
+        diff = msg.value - self.set_point
         # if pH estimate outside the range
         if abs(diff) > self.range:
           # if pH estimate is higher than the range add pH down

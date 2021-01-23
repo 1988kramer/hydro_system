@@ -12,7 +12,7 @@ import glob
 import numpy as np
 import threading
 from datetime import datetime
-from hydro_system.msg import TempMsg
+from hydro_system.msg import StampedFloatWithVariance
 from std_srvs.srv import Empty, EmptyResponse
 
 class DS18B20_Node:
@@ -46,7 +46,7 @@ class DS18B20_Node:
       temp = float(temp_string) / 1000.0
       stamp = rospy.Time.now()
       temp_msg = TempMsg()
-      temp_msg.temperature = temp
+      temp_msg.value = temp
       temp_msg.header.stamp = stamp
       temp_msg.header.seq = self.seq
       self.temp_pub.publish(temp_msg)
