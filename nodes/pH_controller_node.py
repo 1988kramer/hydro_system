@@ -21,7 +21,7 @@ class pH_ControllerNode():
                                          MotorHatCmd, 
                                          queue_size=1)
     self.pH_sub = rospy.Subscriber('/pH', 
-                                   PhMsg, 
+                                   StampedFloatWithVariance, 
                                    self.ph_callback,
                                    queue_size=1)
     self.set_point_srv = rospy.Service('change_set_point', 
@@ -115,7 +115,7 @@ class pH_ControllerNode():
     log_mat = np.array(self.log)
     self.log = []
     date_str = datetime.today().strftime('%d_%m_%Y_%H_%M')
-    filename = '/home/pi/logs/pH_command_' date_str + '.npy'
+    filename = '/home/pi/logs/pH_command_' + date_str + '.npy'
     np.save(filename, log_mat)
     os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
     return []

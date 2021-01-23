@@ -15,17 +15,17 @@ class FilterNode:
                                    StampedFloatWithVariance,
                                    queue_size=1)
     self.x = -1
-    self.q = rospy.get_param('q')
-    self.r = rospy.get_param('r')
-    self.var = rospy.get_param('var')
-    self.last_t
+    self.q = rospy.get_param('~q')
+    self.r = rospy.get_param('~r')
+    self.var = rospy.get_param('~var')
+    self.last_t = 0.0
 
 
   def sensor_callback(self, msg):
 
     stamp = msg.header.stamp.to_sec()
 
-    if self.x = -1:
+    if self.x == -1:
       self.x = msg.value
       self.last_t = stamp
     else:
@@ -37,7 +37,7 @@ class FilterNode:
       S = self.var + self.r
       K = self.var / S
       x_hat = self.x + K * y_tilde
-      self.var = (1.0 - K) * self.temp_var
+      self.var = (1.0 - K) * self.var
       self.x = x_hat
 
       out_msg = StampedFloatWithVariance()

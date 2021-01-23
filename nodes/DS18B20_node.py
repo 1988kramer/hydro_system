@@ -24,7 +24,7 @@ class DS18B20_Node:
     base_dir = '/sys/bus/w1/devices/'
     device_dir = glob.glob(base_dir + '28*')[0]
     self.device_file = device_dir + '/w1_slave'
-    self.temp_pub = rospy.Publisher('/temp', TempMsg, queue_size=1)
+    self.temp_pub = rospy.Publisher('/temp', StampedFloatWithVariance, queue_size=1)
     self.log = []
     self.lock = threading.Lock()
     self.seq = 0
@@ -45,7 +45,7 @@ class DS18B20_Node:
       temp_string = lines[1][equals_pos+2:]
       temp = float(temp_string) / 1000.0
       stamp = rospy.Time.now()
-      temp_msg = TempMsg()
+      temp_msg = StampedFloatWithVariance()
       temp_msg.value = temp
       temp_msg.header.stamp = stamp
       temp_msg.header.seq = self.seq
