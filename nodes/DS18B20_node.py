@@ -10,10 +10,7 @@ Uses code from the example found at https://github.com/adafruit/Adafruit_Learnin
 import rospy
 import glob
 import numpy as np
-import threading
-from datetime import datetime
 from hydro_system.msg import StampedFloatWithVariance
-from std_srvs.srv import Empty, EmptyResponse
 
 class DS18B20_Node:
   def __init__(self):
@@ -25,8 +22,6 @@ class DS18B20_Node:
     device_dir = glob.glob(base_dir + '28*')[0]
     self.device_file = device_dir + '/w1_slave'
     self.temp_pub = rospy.Publisher('/temp', StampedFloatWithVariance, queue_size=1)
-    self.log = []
-    self.lock = threading.Lock()
     self.seq = 0
 
   def read_temp_raw(self):
@@ -52,28 +47,6 @@ class DS18B20_Node:
       self.temp_pub.publish(temp_msg)
       self.seq += 1
 
-      self.log.append([stamp.to_sec(),temp])
-      '''
-      # log roughly once per minute
-      if len(self.log) == 0 or stamp.to_sec() - self.log[-1][0] > 60.0: 
-        with self.lock:
-          self.log.append([stamp.to_sec(),temp])
-      '''
-      # dump log to file at least daily
-      if self.log[-1][0] - self.log[0][0] > 86400.0: 
-        req = Empty()
-        self.save_log(req)
-
-
-  def save_log(self,req):
-    with self.lock:
-      log_mat = np.array(self.log)
-      log = []
-    date_str = datetime.today().strftime('%d_%m_%Y_%H_%M')
-    filename = '/home/pi/temperature_' + date_str + '.npy'
-    np.save(filename, log_mat)
-    os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
-    return []
 
 if __name__ == '__main__':
   
