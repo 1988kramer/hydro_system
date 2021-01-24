@@ -12,7 +12,7 @@ from std_srvs.srv import Empty
 import threading
 from datetime import datetime
 
-class pH_ControllerNode():
+class pH_ControllerNode:
 
   def __init__(self):
     rospy.init_node('pH_controller', anonymous=True)
