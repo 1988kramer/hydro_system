@@ -26,9 +26,6 @@ class pH_ControllerNode:
     self.set_point_srv = rospy.Service('change_set_point', 
                                        ChangeSetPoint, 
                                        self.change_set_point)
-    self.log_srv = rospy.Service('save_controller_log',
-                                 Empty,
-                                 self.save_log)
 
     self.set_point = 6.0
     self.range = 0.2

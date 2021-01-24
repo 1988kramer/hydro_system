@@ -15,7 +15,7 @@ class Logger:
     topics_str = rospy.get_param('~topics')
     self.period = rospy.get_param('~period', 60)
     self.dir = rospy.get_param('~directory', '/home/pi/logs/')
-    if self.dir[-1] != '/'
+    if self.dir[-1] != '/':
       self.dir += '/'
     self.last_times = {}
 
@@ -23,6 +23,7 @@ class Logger:
       rospy.logerr(self.dir + ' is not a directory')
       exit()
 
+    topics = topics_str.split()
     for topic in topics:
       self.subs.append(rospy.Subscriber(topic,
                                         StampedFloatWithVariance,
@@ -43,9 +44,9 @@ class Logger:
       with open(filename, 'a') as file:
         file.write('%.4f,%.4f,%.4f\n' % (stamp, msg.value, msg.variance))
       
-      last_times[topic] = stamp
+      self.last_times[topic] = stamp
 
-    os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
+      os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
 
 
 if __name__ == '__main__':
