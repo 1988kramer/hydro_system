@@ -53,6 +53,8 @@ class pH_ControllerNode:
 
   def ph_callback(self, msg):
 
+    stamp = rospy.Time.now()
+
     # if not waiting for a previous adjustment to take effect
     if stamp - self.last_adjust_time > self.adjust_duration:
 
