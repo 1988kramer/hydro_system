@@ -14,7 +14,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.layout = html.Div(
     html.Div([
-        html.H4('TERRA Satellite Live Feed'),
+        html.H4('Hydro System Status'),
         html.Div(id='live-update-text'),
         dcc.Graph(id='live-update-graph'),
         dcc.Interval(
@@ -24,6 +24,17 @@ app.layout = html.Div(
         )
     ])
 )
+
+@app.callback(Output('live-update-text', 'children'),
+              Input('interval-component', 'n_intervals'))
+def update_metrics(n):
+
+    style = {'padding': '5px', 'fontSize': '16px'}
+    return [
+        html.Span('Temperature: {0:.2f}'.format(25.0), style=style),
+        html.Span('pH: {0:.2f}'.format(7.0), style=style)
+    ]
+
 
 
 # Multiple components can update everytime interval gets fired.
