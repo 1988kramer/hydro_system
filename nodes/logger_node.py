@@ -42,7 +42,8 @@ class Logger:
 
       with open(filename, 'a') as file:
         file.write('%.4f,%.4f,%.4f\n' % (stamp, msg.value, msg.variance))
-        last_times[topic] = stamp
+      
+      last_times[topic] = stamp
 
     os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
 
