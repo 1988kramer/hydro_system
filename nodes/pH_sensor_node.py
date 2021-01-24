@@ -10,11 +10,8 @@ import rospy
 import numpy as np
 from hydro_system.msg import StampedFloatWithVariance
 from hydro_system.srv import CalibratePh, CalibratePhResponse
-from std_srvs.srv import Empty
 import smbus
-from datetime import datetime
 import threading
-import os
 
 
 class pH_Node:
@@ -25,14 +22,8 @@ class pH_Node:
     self.seq = 0
     self.bus = smbus.SMBus(1)
     self.temp = 25.0
-    #self.temp_var = 0.1
-    #self.q = 0.01
-    #self.r = 0.1
-    #self.last_t = -1.0
     self.sensor_address = 0x63 # check and verify this
-    self.log = []
     self.i2c_lock = threading.Lock()
-    self.log_lock = threading.Lock()
 
     self.ph_pub = rospy.Publisher('/pH', 
                                   StampedFloatWithVariance, 
@@ -102,30 +93,8 @@ class pH_Node:
       self.ph_pub.publish(pH_msg)
       self.seq += 1
 
-      self.log.append([stamp.to_sec(), data[0]])
-      '''
-      # log roughly once per minute
-      if len(self.log) == 0 or stamp.to_sec() - self.log[-1][0] > 60.0: 
-        with self.log_lock:
-          self.log.append([stamp.to_sec(),data[0]])
-      '''
-      # dump log to file at least daily
-      if len(self.log) != 0 and self.log[-1][0] - self.log[0][0] > 86400.0: 
-        req = Empty()
-        self.save_log(req)
     else:
       rospy.loginfo('failed to get data')
-
-
-  def save_log(self, req):
-    with self.log_lock:
-      log_mat = np.array(self.log)
-      self.log = []
-    date_str = datetime.today().strftime('%d_%m_%Y_%H_%M')
-    filename = '/home/pi/pH_' + date_str + '.npy'
-    np.save(filename, log_mat)
-    os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
-    return []
 
 
   def calibrate_ph(self, req):
