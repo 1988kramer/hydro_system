@@ -57,7 +57,8 @@ def update_plots_live(n):
     else:
         temp = temp_today
 
-    temp = temps[temps[:,0] - temps[-1,0] < 60.0]
+    temp = temp[temp[:,0] - temp[-1,0] < 60.0]
+    temp[:,0] = temp[:,0] - temp[0,0]
 
     
     temp_filtered_today = np.loadtxt(filenames[1][1], delimiter=',')
@@ -67,9 +68,10 @@ def update_plots_live(n):
     else:
         temp_filtered = temp_filtered_today
 
-    temp_filtered = temps_filtered[temps[:,0] - temps_filtered[-1,0] < 60.0]
+    temp_filtered = temp_filtered[temp_filtered[:,0] - temp_filtered[-1,0] < 60.0]
+    temp_filtered[:,0] = temp_filtered[:,0] - temp_filtered[0,0]
 
-    temp_sigmas = 2.0 * np.sqrt(temps_filtered[:,2])
+    temp_sigmas = 2.0 * np.sqrt(temp_filtered[:,2])
     temp_sig_upper = temp_filtered[:,1] + temp_sigmas
     temp_sig_lower = temp_filtered[:,1] - temp_sigmas
 
@@ -82,15 +84,15 @@ def update_plots_live(n):
     fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
 
     fig.append_trace({
-        'x': temps[:,0],
-        'y': temps[:,1],
+        'x': temp[:,0],
+        'y': temp[:,1],
         'name': 'Raw Temperature',
         'mode': 'lines',
         'type': 'scatter'
     }, 1, 1)
     fig.append_trace({
-        'x': temps_filtered[:,0],
-        'y': temps_filtered[:,1],
+        'x': temp_filtered[:,0],
+        'y': temp_filtered[:,1],
         'name': 'Filtered Temperature',
         'mode': 'lines',
         'type': 'scatter'
@@ -98,14 +100,14 @@ def update_plots_live(n):
     fig.append_trace({
         'x': temp_filtered[:,0],
         'y': temp_sig_upper,
-        'name': 'Temp StdDev Upper'
+        'name': 'Temp StdDev Upper',
         'mode': 'lines',
         'type': 'scatter'
     }, 1, 1)
     fig.append_trace({
         'x': temp_filtered[:,0],
         'y': temp_sig_lower,
-        'name': 'Temp StdDev Lower'
+        'name': 'Temp StdDev Lower',
         'mode': 'lines',
         'type': 'scatter'
     }, 1, 1)
