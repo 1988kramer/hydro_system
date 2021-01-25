@@ -30,9 +30,22 @@ app.layout = html.Div(
 def update_metrics(n):
 
     style = {'padding': '5px', 'fontSize': '16px'}
+    date_str = datetime.today().strftime('_%d_%m_%Y')
+    with open('/home/pi/logs/temp_filtered_' + date_str + '.csv', 'w') as f:
+        for line in f:
+            pass
+        tokens = line.split()
+        temp = float(tokens[1])
+
+    with open('/home/pi/logs/pH_filtered_' + date_str + '.csv', 'w') as f:
+        for line in f:
+            pass
+        tokens = line.split()
+        pH = float(tokens[1])
+
     return [
-        html.Span('Temperature: {0:.2f}'.format(25.0), style=style),
-        html.Span('pH: {0:.2f}'.format(7.0), style=style)
+        html.Span('Temperature: {0:.2f}'.format(temp), style=style),
+        html.Span('pH: {0:.2f}'.format(pH), style=style)
     ]
 
 
