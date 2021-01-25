@@ -10,7 +10,6 @@
     <param name="var" value="0.5" />
   </node>
  
-  <!--
   <node pkg="hydro_system" type="pH_sensor_node.py" name="pH_sensor" output="screen" />
 
   <node pkg="hydro_system" type="filter_node.py" name="pH_filter" >
@@ -21,14 +20,17 @@
     <param name="var" value="0.5" />
   </node>
 
+  <!-- 
   <node pkg="hydro_system" type="motor_hat_node.py" name="motor_hat" />
-
+  
   <node pkg="hydro_system" type="pH_controller_node.py" name="pH_controller" output="screen" />
+  
+  <node pkg="hydro_system" type="motor_hat_tester.py" name="tester" />
   -->
 
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
-    <!--<param name="topics" value="/temp /temp_filtered /pH /pH_filtered" />-->
-    <param name="topics" value="/temp /temp_filtered" />
+    <param name="topics" value="/temp /temp_filtered /pH /pH_filtered" />
+    <!-- <param name="topics" value="/temp /temp_filtered" /> -->
     <param name="period" value="1" />
   </node>
 
