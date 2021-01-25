@@ -31,16 +31,16 @@ def update_metrics(n):
 
     style = {'padding': '5px', 'fontSize': '16px'}
     date_str = datetime.today().strftime('_%d_%m_%Y')
-    with open('/home/pi/logs/temp_filtered_' + date_str + '.csv', 'w') as f:
+    with open('/home/pi/logs/temp_filtered' + date_str + '.csv', 'r') as f:
         for line in f:
             pass
-        tokens = line.split()
+        tokens = line.split(',')
         temp = float(tokens[1])
 
-    with open('/home/pi/logs/pH_filtered_' + date_str + '.csv', 'w') as f:
+    with open('/home/pi/logs/pH_filtered' + date_str + '.csv', 'r') as f:
         for line in f:
             pass
-        tokens = line.split()
+        tokens = line.split(',')
         pH = float(tokens[1])
 
     return [
@@ -71,14 +71,14 @@ def get_data(name):
     else:
         data_filtered = data_filt_today
 
-    data = data[data[0,:] - data[-1,0] < 60.0]
+    data = data[data[-1,0] - data[:,0] < 60.0]
     data[:,0] -= data[0,0]
-    data_filtered = data_filtered[data_filtered[0,:] - data_filtered[-1,0] < 60.0]
+    data_filtered = data_filtered[data_filtered[-1,0] - data_filtered[:,0] < 60.0]
     data_filtered[:,0] -= data_filtered[0,0]
 
     data_sigmas = 2.0 * np.sqrt(data_filtered[:,2])
     data_filtered = np.concatenate((data_filtered,
-                                    np.zeros(data_filtered.shape[0],1)),
+                                    np.zeros((data_filtered.shape[0],1))),
                                     axis=1)
     data_filtered[:,2] = data_filtered[:,1] + data_sigmas
     data_filtered[:,3] = data_filtered[:,1] - data_sigmas
@@ -148,14 +148,14 @@ def update_plots_live(n):
     fig.append_trace({
         'x': pH_filtered[:,0],
         'y': pH_filtered[:,2],
-        'name': 'pH StdDev Upper'
+        'name': 'pH StdDev Upper',
         'mode': 'lines',
         'type': 'scatter'
     }, 2, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
         'y': pH_filtered[:,3],
-        'name': 'pH StdDev Lower'
+        'name': 'pH StdDev Lower',
         'mode': 'lines',
         'type': 'scatter'
     }, 2, 1)
