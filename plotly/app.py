@@ -100,7 +100,7 @@ def update_plots_live(n):
     fig['layout']['margin'] = {
         'l': 30, 'r': 10, 'b': 30, 't': 10
     }
-    fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
+    #fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
 
     fig.append_trace({
         'x': temp[:,0],
@@ -140,28 +140,32 @@ def update_plots_live(n):
         'y': pH[:,1],
         'name': 'Raw pH',
         'mode': 'lines',
-        'type': 'scatter'
+        'type': 'scatter',
+        'line': {'dash': 'dash', 'color': 'black'}
     }, 2, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
         'y': pH_filtered[:,1],
         'name': 'Filtered pH',
         'mode': 'lines',
-        'type': 'scatter'
+        'type': 'scatter',
+        'line': {'dash': 'solid', 'color': 'black'}
     }, 2, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
         'y': pH_filtered[:,2],
         'name': 'pH StdDev Upper',
         'mode': 'lines',
-        'type': 'scatter'
+        'type': 'scatter',
+        'line': {'dash': 'dot', 'color': 'black'}
     }, 2, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
         'y': pH_filtered[:,3],
         'name': 'pH StdDev Lower',
         'mode': 'lines',
-        'type': 'scatter'
+        'type': 'scatter',
+        'line': {'dash': 'dot', 'color': 'black'}
     }, 2, 1)
     
     return fig
