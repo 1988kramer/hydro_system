@@ -31,7 +31,7 @@
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
     <param name="topics" value="/temp /temp_filtered /pH /pH_filtered" />
     <!-- <param name="topics" value="/temp /temp_filtered" /> -->
-    <param name="period" value="1" />
+    <param name="period" value="60" />
   </node>
 
 </launch>

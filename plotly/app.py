@@ -19,7 +19,7 @@ app.layout = html.Div(
         dcc.Graph(id='live-update-graph'),
         dcc.Interval(
             id='interval-component',
-            interval=1*1000, # in milliseconds
+            interval=60*1000, # in milliseconds
             n_intervals=0
         )
     ])
@@ -71,7 +71,7 @@ def get_data(name):
     else:
         data_filtered = data_filt_today
 
-    data = data[data[-1,0] - data[:,0] < 60.0]
+    data = data[data[-1,0] - data[:,0] < 1440.0]
     data[:,0] -= data[0,0]
     data_filtered = data_filtered[data_filtered[-1,0] - data_filtered[:,0] < 60.0]
     data_filtered[:,0] -= data_filtered[0,0]
