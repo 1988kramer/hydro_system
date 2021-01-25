@@ -46,7 +46,7 @@ class Logger:
       
       self.last_times[topic] = stamp
 
-      os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
+      #os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
 
 
 if __name__ == '__main__':
