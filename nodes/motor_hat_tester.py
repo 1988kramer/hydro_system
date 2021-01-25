@@ -18,14 +18,22 @@ def command_publisher():
     motor = 0
 
   msg = MotorHatCmd()
-  msg.commands = ['release'] * 4
-  msg.commands[motor] = 'forward'
-  msg.speeds = [0] * 4
-  msg.speeds[motor] = 100
+  msg.command = 'forward'
+  msg.speed = 128
+  msg.motor = motor
 
   command_pub.publish(msg)
 
   rospy.sleep(2.0)
+
+  stop_msg = MotorHatCmd()
+  stop_msg.command = 'release'
+  stop_msg.speed = 0
+  stop_msg.motor = motor
+
+  command_pub.publish(stop_msg)
+  rospy.sleep(0.1)
+
 
 
 
