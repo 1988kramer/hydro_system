@@ -36,48 +36,54 @@ def update_metrics(n):
     ]
 
 
+def get_data(name):
+    today_str = datetime.today().strftime('_%d_%m_%Y')
+    yesterday_str = (datetime.today() - timedelta(1)).strftime('_%d_%m_%Y')
+    directory = '/home/pi/logs/'
+    data_today_fname = directory + name + today_str + '.csv'
+    data_yesterday_fname = directory + name + yesterday_str + '.csv'
+    data_filt_today_fname = directory + name + '_filtered' + today_str + '.csv'
+    data_filt_yesterday_fname = directory + name + '_filtered' + yesterday_str + '.csv'
+
+    data_today = np.loadtxt(data_today_fname, delimiter=',')
+    if os.path.isfile(data_yesterday_fname):
+        data_yesterday = np.loadtxt(data_yesterday_fname, delimiter=',')
+        data = np.concatenate((data_yesterday,data_today))
+    else:
+        data = data_today
+    data_filt_today = np.loadtxt(data_filt_today_fname, delimiter=',')
+    if os.path.isfile(data_filt_yesterday_fname):
+        data_filt_yesterday = np.loadtxt(data_filt_yesterday_fname, delimiter=',')
+        data_filtered = np.concatenate((data_filt_yesterday, data_filt_today))
+    else:
+        data_filtered = data_filt_today
+
+    data = data[data[0,:] - data[-1,0] < 60.0]
+    data[:,0] -= data[0,0]
+    data_filtered = data_filtered[data_filtered[0,:] - data_filtered[-1,0] < 60.0]
+    data_filtered[:,0] -= data_filtered[0,0]
+
+    data_sigmas = 2.0 * np.sqrt(data_filtered[:,2])
+    data_filtered = np.concatenate((data_filtered,
+                                    np.zeros(data_filtered.shape[0],1)),
+                                    axis=1)
+    data_filtered[:,2] = data_filtered[:,1] + data_sigmas
+    data_filtered[:,3] = data_filtered[:,1] - data_sigmas
+
+    return data, data_filtered
+
 
 # Multiple components can update everytime interval gets fired.
 @app.callback(Output('live-update-graph', 'figure'),
               Input('interval-component', 'n_intervals'))
 def update_plots_live(n):
     
-    today_str = datetime.today().strftime('_%d_%m_%Y')
-    yesterday_str = (datetime.today() - timedelta(1)).strftime('_%d_%m_%Y')
-    directory = '/home/pi/logs/'
-    filenames = [[directory + 'temp' + yesterday_str + '.csv',
-                  directory + 'temp' + today_str + '.csv'],
-                 [directory + 'temp_filtered' + yesterday_str + '.csv',
-                  directory + 'temp_filtered' + today_str + '.csv']]
-
-    temp_today = np.loadtxt(filenames[0][1], delimiter=',')
-    if os.path.isfile(filenames[0][0]):
-        temp_yesterday = np.loadtxt(filenames[0][0], delimiter=',')
-        temp = np.concatenate((temps_yesterday,temps_today),axis=0)
-    else:
-        temp = temp_today
-
-    temp = temp[temp[:,0] - temp[-1,0] < 60.0]
-    temp[:,0] = temp[:,0] - temp[0,0]
-
-    
-    temp_filtered_today = np.loadtxt(filenames[1][1], delimiter=',')
-    if os.path.isfile(filenames[1][0]):
-        temp_filtered_yesterday = np.loadtxt(filenames[1][0], delimiter=',')
-        temp_filtered = np.concatenate((temps_filtered_yesterday,temps_filtered_today),axis=0)
-    else:
-        temp_filtered = temp_filtered_today
-
-    temp_filtered = temp_filtered[temp_filtered[:,0] - temp_filtered[-1,0] < 60.0]
-    temp_filtered[:,0] = temp_filtered[:,0] - temp_filtered[0,0]
-
-    temp_sigmas = 2.0 * np.sqrt(temp_filtered[:,2])
-    temp_sig_upper = temp_filtered[:,1] + temp_sigmas
-    temp_sig_lower = temp_filtered[:,1] - temp_sigmas
+    temp, temp_filtered = get_data('temp')
+    pH, pH_filtered = get_data('pH')
 
 
     # Create the graph with subplots
-    fig = plotly.tools.make_subplots(rows=1, cols=1, vertical_spacing=0.2)
+    fig = plotly.tools.make_subplots(rows=2, cols=1, vertical_spacing=0.2)
     fig['layout']['margin'] = {
         'l': 30, 'r': 10, 'b': 30, 't': 10
     }
@@ -99,19 +105,19 @@ def update_plots_live(n):
     }, 1, 1)
     fig.append_trace({
         'x': temp_filtered[:,0],
-        'y': temp_sig_upper,
+        'y': temp_filtered[:,2],
         'name': 'Temp StdDev Upper',
         'mode': 'lines',
         'type': 'scatter'
     }, 1, 1)
     fig.append_trace({
         'x': temp_filtered[:,0],
-        'y': temp_sig_lower,
+        'y': temp_filtered[:,3],
         'name': 'Temp StdDev Lower',
         'mode': 'lines',
         'type': 'scatter'
     }, 1, 1)
-    '''
+    
     fig.append_trace({
         'x': pH[:,0],
         'y': pH[:,1],
@@ -128,19 +134,19 @@ def update_plots_live(n):
     }, 2, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
-        'y': pH__sig_upper,
+        'y': pH_filtered[:,2],
         'name': 'pH StdDev Upper'
         'mode': 'lines',
         'type': 'scatter'
     }, 2, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
-        'y': pH__sig_lower,
+        'y': pH_filtered[:,3],
         'name': 'pH StdDev Lower'
         'mode': 'lines',
         'type': 'scatter'
     }, 2, 1)
-    '''
+    
     return fig
 
 
