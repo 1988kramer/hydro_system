@@ -107,28 +107,32 @@ def update_plots_live(n):
         'y': temp[:,1],
         'name': 'Raw Temperature',
         'mode': 'lines',
-        'type': 'scatter'
+        'type': 'scatter',
+        'line': {'dash': 'dash', 'color': 'black'}
     }, 1, 1)
     fig.append_trace({
         'x': temp_filtered[:,0],
         'y': temp_filtered[:,1],
         'name': 'Filtered Temperature',
         'mode': 'lines',
-        'type': 'scatter'
+        'type': 'scatter',
+        'line': {'dash': 'solid', 'color': 'black'}
     }, 1, 1)
     fig.append_trace({
         'x': temp_filtered[:,0],
         'y': temp_filtered[:,2],
         'name': 'Temp StdDev Upper',
         'mode': 'lines',
-        'type': 'scatter'
+        'type': 'scatter',
+        'line': {'dash': 'dot', 'color': 'black'}
     }, 1, 1)
     fig.append_trace({
         'x': temp_filtered[:,0],
         'y': temp_filtered[:,3],
         'name': 'Temp StdDev Lower',
         'mode': 'lines',
-        'type': 'scatter'
+        'type': 'scatter',
+        'line': {'dash': 'dot', 'color': 'black'}
     }, 1, 1)
     
     fig.append_trace({
