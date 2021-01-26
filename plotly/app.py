@@ -15,7 +15,6 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.layout = html.Div(
     html.Div([
         html.H4('Hydro System Status'),
-        html.Div(id='live-update-text'),
         dcc.Graph(id='live-update-graph'),
         dcc.Interval(
             id='interval-component',
@@ -24,29 +23,6 @@ app.layout = html.Div(
         )
     ])
 )
-
-@app.callback(Output('live-update-text', 'children'),
-              Input('interval-component', 'n_intervals'))
-def update_metrics(n):
-
-    style = {'padding': '5px', 'fontSize': '16px'}
-    date_str = datetime.today().strftime('_%d_%m_%Y')
-    with open('/home/pi/logs/temp_filtered' + date_str + '.csv', 'r') as f:
-        for line in f:
-            pass
-        tokens = line.split(',')
-        temp = float(tokens[1])
-
-    with open('/home/pi/logs/pH_filtered' + date_str + '.csv', 'r') as f:
-        for line in f:
-            pass
-        tokens = line.split(',')
-        pH = float(tokens[1])
-
-    return [
-        html.Span('Temperature: {0:.2f}'.format(temp), style=style),
-        html.Span('pH: {0:.2f}'.format(pH), style=style)
-    ]
 
 
 def get_data(name):
@@ -71,9 +47,9 @@ def get_data(name):
     else:
         data_filtered = data_filt_today
 
-    data = data[data[-1,0] - data[:,0] < 1440.0]
+    data = data[data[-1,0] - data[:,0] < 86400.0]
     data[:,0] -= data[0,0]
-    data_filtered = data_filtered[data_filtered[-1,0] - data_filtered[:,0] < 60.0]
+    data_filtered = data_filtered[data_filtered[-1,0] - data_filtered[:,0] < 86400.0]
     data_filtered[:,0] -= data_filtered[0,0]
 
     data_sigmas = 2.0 * np.sqrt(data_filtered[:,2])
@@ -93,19 +69,23 @@ def update_plots_live(n):
     
     temp, temp_filtered = get_data('temp')
     pH, pH_filtered = get_data('pH')
+    deg_sign = u'\N{DEGREE SIGN}'
 
-
+    temp_title = 'Water Temperature (current: %.2f' % temp_filtered[-1,1]
+    temp_title += deg_sign + 'C)'
+    pH_title = 'Water pH (current: %.2f)' % pH_filtered[-1,1]
     # Create the graph with subplots
-    fig = plotly.tools.make_subplots(rows=2, cols=1, vertical_spacing=0.2)
+    fig = plotly.subplots.make_subplots(rows=2, cols=1, vertical_spacing=0.2,
+            subplot_titles=(temp_title, pH_title))
     fig['layout']['margin'] = {
-        'l': 30, 'r': 10, 'b': 30, 't': 10
+        'l': 30, 'r': 10, 'b': 30, 't': 30
     }
-    #fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
+    fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
 
     fig.append_trace({
         'x': temp[:,0],
         'y': temp[:,1],
-        'name': 'Raw Temperature',
+        'name': 'Raw',
         'mode': 'lines',
         'type': 'scatter',
         'line': {'dash': 'dash', 'color': 'black'}
@@ -113,7 +93,7 @@ def update_plots_live(n):
     fig.append_trace({
         'x': temp_filtered[:,0],
         'y': temp_filtered[:,1],
-        'name': 'Filtered Temperature',
+        'name': 'Filtered',
         'mode': 'lines',
         'type': 'scatter',
         'line': {'dash': 'solid', 'color': 'black'}
@@ -121,7 +101,7 @@ def update_plots_live(n):
     fig.append_trace({
         'x': temp_filtered[:,0],
         'y': temp_filtered[:,2],
-        'name': 'Temp StdDev Upper',
+        'name': 'StdDev',
         'mode': 'lines',
         'type': 'scatter',
         'line': {'dash': 'dot', 'color': 'black'}
@@ -132,7 +112,8 @@ def update_plots_live(n):
         'name': 'Temp StdDev Lower',
         'mode': 'lines',
         'type': 'scatter',
-        'line': {'dash': 'dot', 'color': 'black'}
+        'line': {'dash': 'dot', 'color': 'black'},
+        'showlegend': False
     }, 1, 1)
     
     fig.append_trace({
@@ -141,7 +122,8 @@ def update_plots_live(n):
         'name': 'Raw pH',
         'mode': 'lines',
         'type': 'scatter',
-        'line': {'dash': 'dash', 'color': 'black'}
+        'line': {'dash': 'dash', 'color': 'black'},
+        'showlegend': False
     }, 2, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
@@ -149,7 +131,8 @@ def update_plots_live(n):
         'name': 'Filtered pH',
         'mode': 'lines',
         'type': 'scatter',
-        'line': {'dash': 'solid', 'color': 'black'}
+        'line': {'dash': 'solid', 'color': 'black'},
+        'showlegend': False
     }, 2, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
@@ -157,7 +140,8 @@ def update_plots_live(n):
         'name': 'pH StdDev Upper',
         'mode': 'lines',
         'type': 'scatter',
-        'line': {'dash': 'dot', 'color': 'black'}
+        'line': {'dash': 'dot', 'color': 'black'},
+        'showlegend': False
     }, 2, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
@@ -165,9 +149,13 @@ def update_plots_live(n):
         'name': 'pH StdDev Lower',
         'mode': 'lines',
         'type': 'scatter',
-        'line': {'dash': 'dot', 'color': 'black'}
+        'line': {'dash': 'dot', 'color': 'black'},
+        'showlegend': False
     }, 2, 1)
-    
+
+    fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=1,col=1)
+    fig.update_yaxes(title_text='pH',row=2,col=1)
+
     return fig
 
 
