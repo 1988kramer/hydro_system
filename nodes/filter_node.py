@@ -34,17 +34,17 @@ class FilterNode:
       self.last_t = stamp
       y_tilde = msg.value - self.x
       var_hat = self.var + self.q * dt
-      S = self.var + self.r
-      K = self.var / S
+      S = var_hat + self.r
+      K = var_hat / S
       x_hat = self.x + K * y_tilde
-      self.var = (1.0 - K) * self.var
+      self.var = (1.0 - K) * var_hat
       self.x = x_hat
 
-      out_msg = StampedFloatWithVariance()
-      out_msg.header = msg.header
-      out_msg.value = self.x
-      out_msg.variance = self.var
-      self.est_pub.publish(out_msg)
+    out_msg = StampedFloatWithVariance()
+    out_msg.header = msg.header
+    out_msg.value = self.x
+    out_msg.variance = self.var
+    self.est_pub.publish(out_msg)
 
 
 if __name__ == '__main__':
