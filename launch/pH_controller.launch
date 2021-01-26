@@ -5,8 +5,8 @@
   <node pkg="hydro_system" type="filter_node.py" name="temp_filter" >
     <remap from="/raw_in" to="/temp" />
     <remap from="/filtered_out" to="/temp_filtered" />
-    <param name="q" value="0.01" />
-    <param name="r" value="0.1" />
+    <param name="q" value="0.001" />
+    <param name="r" value="0.05" />
     <param name="var" value="0.1" />
   </node>
  
@@ -15,8 +15,8 @@
   <node pkg="hydro_system" type="filter_node.py" name="pH_filter" >
     <remap from="/raw_in" to="/pH" />
     <remap from="/filtered_out" to="/pH_filtered" />
-    <param name="q" value="0.01" />
-    <param name="r" value="0.1" />
+    <param name="q" value="0.001" />
+    <param name="r" value="0.05" />
     <param name="var" value="0.1" />
   </node>
 
@@ -31,7 +31,7 @@
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
     <param name="topics" value="/temp /temp_filtered /pH /pH_filtered" />
     <!-- <param name="topics" value="/temp /temp_filtered" /> -->
-    <param name="period" value="1" />
+    <param name="period" value="60" />
   </node>
 
 </launch>
