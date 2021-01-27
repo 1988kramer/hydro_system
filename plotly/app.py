@@ -49,15 +49,10 @@ def get_data(name):
 
     data = data[data[-1,0] - data[:,0] < 86400.0]
     data[:,0] -= data[0,0]
+    data[:,0] /= 3600.
     data_filtered = data_filtered[data_filtered[-1,0] - data_filtered[:,0] < 86400.0]
     data_filtered[:,0] -= data_filtered[0,0]
-
-    data_sigmas = 2.0 * np.sqrt(data_filtered[:,2])
-    data_filtered = np.concatenate((data_filtered,
-                                    np.zeros((data_filtered.shape[0],1))),
-                                    axis=1)
-    data_filtered[:,2] = data_filtered[:,1] + data_sigmas
-    data_filtered[:,3] = data_filtered[:,1] - data_sigmas
+    data_filtered[:,0] /= 3600.
 
     return data, data_filtered
 
@@ -88,7 +83,7 @@ def update_plots_live(n):
         'name': 'Raw',
         'mode': 'lines',
         'type': 'scatter',
-        'line': {'dash': 'dash', 'color': 'black'}
+        'line': {'dash': 'dash', 'color': 'red'}
     }, 1, 1)
     fig.append_trace({
         'x': temp_filtered[:,0],
@@ -96,24 +91,7 @@ def update_plots_live(n):
         'name': 'Filtered',
         'mode': 'lines',
         'type': 'scatter',
-        'line': {'dash': 'solid', 'color': 'black'}
-    }, 1, 1)
-    fig.append_trace({
-        'x': temp_filtered[:,0],
-        'y': temp_filtered[:,2],
-        'name': 'StdDev',
-        'mode': 'lines',
-        'type': 'scatter',
-        'line': {'dash': 'dot', 'color': 'black'}
-    }, 1, 1)
-    fig.append_trace({
-        'x': temp_filtered[:,0],
-        'y': temp_filtered[:,3],
-        'name': 'Temp StdDev Lower',
-        'mode': 'lines',
-        'type': 'scatter',
-        'line': {'dash': 'dot', 'color': 'black'},
-        'showlegend': False
+        'line': {'dash': 'solid', 'color': 'blue'}
     }, 1, 1)
     
     fig.append_trace({
@@ -122,7 +100,7 @@ def update_plots_live(n):
         'name': 'Raw pH',
         'mode': 'lines',
         'type': 'scatter',
-        'line': {'dash': 'dash', 'color': 'black'},
+        'line': {'dash': 'dash', 'color': 'red'},
         'showlegend': False
     }, 2, 1)
     fig.append_trace({
@@ -131,25 +109,7 @@ def update_plots_live(n):
         'name': 'Filtered pH',
         'mode': 'lines',
         'type': 'scatter',
-        'line': {'dash': 'solid', 'color': 'black'},
-        'showlegend': False
-    }, 2, 1)
-    fig.append_trace({
-        'x': pH_filtered[:,0],
-        'y': pH_filtered[:,2],
-        'name': 'pH StdDev Upper',
-        'mode': 'lines',
-        'type': 'scatter',
-        'line': {'dash': 'dot', 'color': 'black'},
-        'showlegend': False
-    }, 2, 1)
-    fig.append_trace({
-        'x': pH_filtered[:,0],
-        'y': pH_filtered[:,3],
-        'name': 'pH StdDev Lower',
-        'mode': 'lines',
-        'type': 'scatter',
-        'line': {'dash': 'dot', 'color': 'black'},
+        'line': {'dash': 'solid', 'color': 'blue'},
         'showlegend': False
     }, 2, 1)
 
