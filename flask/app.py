@@ -7,7 +7,6 @@ app = Flask(__name__)
 
 def get_data(name):
   today_str = datetime.today().strftime('_%d_%m_%Y')
-  yesterday_str = (datetime.today() - timedelta(1)).strftime('_%d_%m_%Y')
   directory = '/home/pi/logs/'
   data_fname = directory + name + '_filtered' + today_str + '.csv'
   
@@ -18,5 +17,7 @@ def get_data(name):
 @app.route('/')
 def time_now():
   pH = get_data('pH')
+  pH_str = '%.2f' % pH
   temp = get_data('temp')
-  return render_template('time.html',vals=[pH,temp])
+  temp_str = '%.2f' % temp
+  return render_template('time.html',vals=[pH_str,temp_str])
