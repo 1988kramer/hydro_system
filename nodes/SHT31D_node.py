@@ -7,7 +7,7 @@ borrows from https://github.com/ralf1070/Adafruit_Python_SHT31/blob/master/Adafr
 
 import rospy
 from hydro_system.msg import StampedFloatWithVariance
-import Adafruit_GPIO.I2C as I2C
+import smbus
 
 SHT31_MEAS_HIGHREP_STRETCH = 0x2C06
 SHT31_MEAS_MEDREP_STRETCH = 0x2C0D
@@ -43,16 +43,20 @@ class SHT31D_Node:
                                         queue_size=1)
 
     self.device_address = 0x44
-    self.i2c = I2C.get_i2c_device(self.device_address)
+    self.i2c = smbus.SMBus(1)
     self.reset()
 
 
   def write_command(self, command):
-    self.i2c.write8(command >> 8, command & 0xFF)
-
+    try:
+      self.i2c.write_i2c_block_data(self.device_address, command >> 8, [command & 0xFF])
+      return True
+    except IOError as e:
+      print('Error ' + e.strerror + ' occurred while writing to address ' + str(self.device_address))
+      return False
 
   def reset(self):
-    self.send_command(SHT31_SOFTRESET)
+    self.write_command(SHT31_SOFTRESET)
     rospy.sleep(0.01)
 
   def set_heater(self, enable = True):
@@ -65,7 +69,7 @@ class SHT31D_Node:
     polynomial = 0x31
     crc = 0xFF
 
-    for index in range(len(buffer)):
+    for index in range(len(buf)):
       crc ^= buf[index]
       for i in range(8,0,-1):
         if crc & 0x80:
@@ -78,8 +82,13 @@ class SHT31D_Node:
   def read_temperature_humidity(self):
     self.write_command(SHT31_MEAS_HIGHREP)
     rospy.sleep(0.015)
-    buf = self.i2c.readList(0, 6)
-
+    
+    try:
+        buf = self.i2c.read_i2c_block_data(self.device_address, 0x00, 6)
+    except IOError as e:
+        print('Error ' + e.strerror + ' occurred while reading from address ' + str(self.device_address))
+        return None
+    
     if buf[2] != self.crc8(buf[0:2]):
       return (float('nan'), float('nan'))
 
@@ -103,7 +112,6 @@ class SHT31D_Node:
     temp_msg.header.stamp = rospy.Time.now()
     temp_msg.value = temp
 
-    humidity = sensor.humidity
     humidity_msg = StampedFloatWithVariance()
     humidity_msg.header = temp_msg.header
     humidity_msg.value = humidity
