@@ -74,11 +74,11 @@ def update_plots_live(n):
     pH_title = 'Water pH (current: %.2f)' % pH_filtered[-1,1]
     air_temp_title = 'Air Temperature (current: %.2f' % air_temp_filtered[-1,1]
     air_temp_title += deg_sign + 'C)'
-    humidity_title = 'Relative Humidity (current: %.2f' % temp_filtered[-1,1]
+    humidity_title = 'Relative Humidity (current: %.2f' % humidity_filtered[-1,1]
     humidity_title += deg_sign + '%)'
 
     # Create the graph with subplots
-    fig = plotly.subplots.make_subplots(rows=4, cols=1, vertical_spacing=0.2,
+    fig = plotly.subplots.make_subplots(rows=4, cols=1, vertical_spacing=0.1,
             subplot_titles=(water_temp_title, pH_title, air_temp_title, humidity_title))
     fig['layout']['margin'] = {
         'l': 30, 'r': 10, 'b': 30, 't': 30
@@ -163,6 +163,7 @@ def update_plots_live(n):
     fig.update_yaxes(title_text='pH',row=2,col=1)
     fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=3,col=1)
     fig.update_yaxes(title_text='Humidity (%)',row=4,col=1)
+    fig.update_layout(height=1200)
 
 
     return fig
