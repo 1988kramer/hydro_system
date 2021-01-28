@@ -92,7 +92,7 @@ def update_plots_live(n):
         'mode': 'lines',
         'type': 'scatter',
         'line': {'dash': 'dash', 'color': 'red'}
-    }, 1, 1)
+    }, 2, 1)
     fig.append_trace({
         'x': water_temp_filtered[:,0],
         'y': water_temp_filtered[:,1],
@@ -100,7 +100,7 @@ def update_plots_live(n):
         'mode': 'lines',
         'type': 'scatter',
         'line': {'dash': 'solid', 'color': 'blue'}
-    }, 1, 1)
+    }, 2, 1)
     
     fig.append_trace({
         'x': pH[:,0],
@@ -110,7 +110,7 @@ def update_plots_live(n):
         'type': 'scatter',
         'line': {'dash': 'dash', 'color': 'red'},
         'showlegend': False
-    }, 2, 1)
+    }, 1, 1)
     fig.append_trace({
         'x': pH_filtered[:,0],
         'y': pH_filtered[:,1],
@@ -119,7 +119,7 @@ def update_plots_live(n):
         'type': 'scatter',
         'line': {'dash': 'solid', 'color': 'blue'},
         'showlegend': False
-    }, 2, 1)
+    }, 1, 1)
 
     fig.append_trace({
         'x': air_temp[:,0],
