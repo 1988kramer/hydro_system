@@ -19,9 +19,9 @@ def time_now():
   pH = get_data('pH')
   pH_str = '%.2f' % pH
   air_temp = get_data('air_temp')
-  air_temp_str = '%.2f' % air_temp
+  air_temp_str = '%.1f' % air_temp
   water_temp = get_data('water_temp')
-  water_temp_str = '%.2f' % water_temp
+  water_temp_str = '%.1f' % water_temp
   humidity = get_data('humidity')
-  humidity_str = '%.2f' % humidity
+  humidity_str = '%.1f' % humidity
   return render_template('time.html',vals=[pH_str,water_temp_str,air_temp_str,humidity_str])
