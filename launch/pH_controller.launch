@@ -1,10 +1,12 @@
 <launch>
 
-  <node pkg="hydro_system" type="DS18B20_node.py" name="water_temp_sensor" />
+  <node pkg="hydro_system" type="DS18B20_node.py" name="water_temp_sensor" >
+    <remap from="/temp" to="/water_temp" />
+  </node>
 
   <node pkg="hydro_system" type="filter_node.py" name="temp_filter" >
-    <remap from="/raw_in" to="/temp" />
-    <remap from="/filtered_out" to="/temp_filtered" />
+    <remap from="/raw_in" to="/water_temp" />
+    <remap from="/filtered_out" to="/water_temp_filtered" />
     <param name="q" value="0.001" />
     <param name="r" value="0.05" />
     <param name="var" value="0.1" />
@@ -20,6 +22,26 @@
     <param name="var" value="0.1" />
   </node>
 
+  <node pkg="hydro_system" type="SHT31D_node.py" name="air_temp_humidity">
+    <remap from="/temp" to="/air_temp" />
+  </node>
+
+  <node pkg="hydro_system" type="filter_node.py" name="air_temp_filter" >
+    <remap from="/raw_in" to="/air_temp" />
+    <remap from="/filtered_out" to="/air_temp_filtered" />
+    <param name="q" value="0.001" />
+    <param name="r" value="0.05" />
+    <param name="var" value="0.1" />
+  </node>
+
+  <node pkg="hydro_system" type="filter_node.py" name="water_temp_filter" >
+    <remap from="/raw_in" to="/humidity" />
+    <remap from="/filtered_out" to="/humidity_filtered" />
+    <param name="q" value="0.001" />
+    <param name="r" value="0.05" />
+    <param name="var" value="0.1" />
+  </node>
+
   <!-- 
   <node pkg="hydro_system" type="motor_hat_node.py" name="motor_hat" />
   
@@ -29,7 +51,7 @@
   -->
 
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
-    <param name="topics" value="/temp /temp_filtered /pH /pH_filtered" />
+    <param name="topics" value="/water_temp /water_temp_filtered /air_temp /air_temp_filtered /pH /pH_filtered /humidity /humidity_filtered" />
     <!-- <param name="topics" value="/temp /temp_filtered" /> -->
     <param name="period" value="60" />
   </node>
