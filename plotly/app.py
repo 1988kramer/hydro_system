@@ -159,9 +159,9 @@ def update_plots_live(n):
         'showlegend': False
     }, 4, 1)
 
-    fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=1,col=1)
-    fig.update_yaxes(title_text='pH',row=3,col=1)
     fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=2,col=1)
+    fig.update_yaxes(title_text='pH',row=1,col=1)
+    fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=3,col=1)
     fig.update_yaxes(title_text='Humidity (%)',row=4,col=1)
     fig.update_layout(height=1200)
 
