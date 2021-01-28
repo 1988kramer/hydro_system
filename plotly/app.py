@@ -62,32 +62,40 @@ def get_data(name):
               Input('interval-component', 'n_intervals'))
 def update_plots_live(n):
     
-    temp, temp_filtered = get_data('temp')
+    water_temp, water_temp_filtered = get_data('water_temp')
     pH, pH_filtered = get_data('pH')
+    air_temp, air_temp_filtered = get_data('air_temp')
+    humidity, humidity_filtered = get_data('humidity')
+
     deg_sign = u'\N{DEGREE SIGN}'
 
-    temp_title = 'Water Temperature (current: %.2f' % temp_filtered[-1,1]
-    temp_title += deg_sign + 'C)'
+    water_temp_title = 'Water Temperature (current: %.2f' % water_temp_filtered[-1,1]
+    water_temp_title += deg_sign + 'C)'
     pH_title = 'Water pH (current: %.2f)' % pH_filtered[-1,1]
+    air_temp_title = 'Air Temperature (current: %.2f' % air_temp_filtered[-1,1]
+    air_temp_title += deg_sign + 'C)'
+    humidity_title = 'Relative Humidity (current: %.2f' % temp_filtered[-1,1]
+    humidity_title += deg_sign + '%)'
+
     # Create the graph with subplots
-    fig = plotly.subplots.make_subplots(rows=2, cols=1, vertical_spacing=0.2,
-            subplot_titles=(temp_title, pH_title))
+    fig = plotly.subplots.make_subplots(rows=4, cols=1, vertical_spacing=0.2,
+            subplot_titles=(water_temp_title, pH_title, air_temp_title, humidity_title))
     fig['layout']['margin'] = {
         'l': 30, 'r': 10, 'b': 30, 't': 30
     }
     fig['layout']['legend'] = {'x': 0, 'y': 1, 'xanchor': 'left'}
 
     fig.append_trace({
-        'x': temp[:,0],
-        'y': temp[:,1],
+        'x': water_temp[:,0],
+        'y': water_temp[:,1],
         'name': 'Raw',
         'mode': 'lines',
         'type': 'scatter',
         'line': {'dash': 'dash', 'color': 'red'}
     }, 1, 1)
     fig.append_trace({
-        'x': temp_filtered[:,0],
-        'y': temp_filtered[:,1],
+        'x': water_temp_filtered[:,0],
+        'y': water_temp_filtered[:,1],
         'name': 'Filtered',
         'mode': 'lines',
         'type': 'scatter',
@@ -113,8 +121,49 @@ def update_plots_live(n):
         'showlegend': False
     }, 2, 1)
 
+    fig.append_trace({
+        'x': air_temp[:,0],
+        'y': air_temp[:,1],
+        'name': 'air temp raw',
+        'mode': 'lines',
+        'type': 'scatter',
+        'line': {'dash': 'dash', 'color': 'red'},
+        'showlegend': False
+    }, 3, 1)
+    fig.append_trace({
+        'x': air_temp_filtered[:,0],
+        'y': air_temp_filtered[:,1],
+        'name': 'air temp filtered',
+        'mode': 'lines',
+        'type': 'scatter',
+        'line': {'dash': 'solid', 'color': 'blue'},
+        'showlegend': False
+    }, 3, 1)
+
+    fig.append_trace({
+        'x': humidity[:,0],
+        'y': humidity[:,1],
+        'name': 'humdity raw',
+        'mode': 'lines',
+        'type': 'scatter',
+        'line': {'dash': 'dash', 'color': 'red'},
+        'showlegend': False
+    }, 4, 1)
+    fig.append_trace({
+        'x': humidity_filtered[:,0],
+        'y': humidity_filtered[:,1],
+        'name': 'humidity filtered',
+        'mode': 'lines',
+        'type': 'scatter',
+        'line': {'dash': 'solid', 'color': 'blue'},
+        'showlegend': False
+    }, 4, 1)
+
     fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=1,col=1)
     fig.update_yaxes(title_text='pH',row=2,col=1)
+    fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=3,col=1)
+    fig.update_yaxes(title_text='Humidity (%)',row=4,col=1)
+
 
     return fig
 
