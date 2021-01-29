@@ -18,6 +18,7 @@ class Logger:
     if self.dir[-1] != '/':
       self.dir += '/'
     self.last_times = {}
+    self.last_fnames = {}
 
     if not os.path.isdir(self.dir):
       rospy.logerr(self.dir + ' is not a directory')
@@ -46,7 +47,12 @@ class Logger:
       
       self.last_times[topic] = stamp
 
-      #os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
+      if filename not in self.last_fnames.keys():
+        self.last_fnames[topic] = filename
+      elif filename != self.last_fnames[topic]:
+        os.system('rclone copy ' + self.last_fnames[topic] 
+                  + ' remote_logs:personal\ projects/hydroponics/logs/')
+        self.last_fnames[topic] = filename
 
 
 if __name__ == '__main__':
