@@ -49,9 +49,11 @@ def get_data(name):
 
     data = data[data[-1,0] - data[:,0] < 86400.0]
     data[:,0] -= data[0,0]
+    data[:,0] -= data[-1,0]
     data[:,0] /= 3600.
     data_filtered = data_filtered[data_filtered[-1,0] - data_filtered[:,0] < 86400.0]
     data_filtered[:,0] -= data_filtered[0,0]
+    data_filtered[:,0] -= data_filtered[-1,0]
     data_filtered[:,0] /= 3600.
 
     return data, data_filtered
