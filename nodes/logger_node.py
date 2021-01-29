@@ -47,9 +47,10 @@ class Logger:
       
       self.last_times[topic] = stamp
 
-      if filename not in self.last_fnames.keys():
+      if topic not in self.last_fnames.keys():
         self.last_fnames[topic] = filename
-      elif filename != self.last_fnames[topic]:
+        
+      if filename != self.last_fnames[topic]:
         os.system('rclone copy ' + self.last_fnames[topic] 
                   + ' remote_logs:personal\ projects/hydroponics/logs/')
         self.last_fnames[topic] = filename
