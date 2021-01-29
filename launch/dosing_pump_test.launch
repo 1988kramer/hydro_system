@@ -1,0 +1,7 @@
+<launch>
+
+  <node pkg="hydro_system" type="motor_hat_node.py" name="motor_hat" />
+
+  <node pkg="hydro_system" type="motor_hat_tester.py" name="tester" output="screen" />
+
+</launch>
