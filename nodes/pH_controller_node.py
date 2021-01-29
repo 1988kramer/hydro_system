@@ -42,6 +42,11 @@ class pH_ControllerNode:
     self.start_msg.speed = 128
     self.start_msg.command = 'forward'
 
+    self.retract_msg = MotorHatCmd()
+    self.retract_msg.motor = 0
+    self.retract_msg.speed = 128
+    self.rectract_msg.command = 'reverse'
+
     self.stop_msg = MotorHatCmd()
     self.stop_msg.motor = 0
     self.stop_msg.speed = 0
@@ -79,6 +84,7 @@ class pH_ControllerNode:
 
     self.start_msg.motor = motor
     self.stop_msg.motor = motor
+    self.rectract_msg = motor
 
     if direction == 1.0:
       rospy.logerr('motor up command')
@@ -86,7 +92,9 @@ class pH_ControllerNode:
       rospy.logerr('motor down command')
 
     self.motor_cmd_pub.publish(self.start_msg)
-    rospy.sleep(2.0)
+    rospy.sleep(3.0)
+    self.motor_cmd_pub.publish(self.retract_msg)
+    rospy.sleep(1.0)
     self.motor_cmd_pub.publish(self.stop_msg)
 
 
