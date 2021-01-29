@@ -24,16 +24,16 @@ def command_publisher():
 
   command_pub.publish(msg)
 
-  rospy.sleep(3.0)
+  rospy.sleep(8.0)
 
   retract_msg = MotorHatCmd()
-  retract_msg.command = 'reverse'
+  retract_msg.command = 'backward'
   retract_msg.speed = 128
   retract_msg.motor = motor
 
   command_pub.publish(retract_msg)
 
-  rospy.sleep(1.0)
+  rospy.sleep(5.0)
 
   stop_msg = MotorHatCmd()
   stop_msg.command = 'release'
