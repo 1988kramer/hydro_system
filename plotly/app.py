@@ -165,6 +165,7 @@ def update_plots_live(n):
     fig.update_yaxes(title_text='pH',row=1,col=1)
     fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=3,col=1)
     fig.update_yaxes(title_text='Humidity (%)',row=4,col=1)
+    fig.update_xaxes(title_text='time (hours)',row=4,col=1)
     fig.update_layout(height=1200)
 
 
