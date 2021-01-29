@@ -8,7 +8,7 @@
     <remap from="/raw_in" to="/water_temp" />
     <remap from="/filtered_out" to="/water_temp_filtered" />
     <param name="q" value="0.001" />
-    <param name="r" value="0.05" />
+    <param name="r" value="0.1" />
     <param name="var" value="0.1" />
   </node>
  
@@ -18,7 +18,7 @@
     <remap from="/raw_in" to="/pH" />
     <remap from="/filtered_out" to="/pH_filtered" />
     <param name="q" value="0.001" />
-    <param name="r" value="0.05" />
+    <param name="r" value="0.1" />
     <param name="var" value="0.1" />
   </node>
 
@@ -30,7 +30,7 @@
     <remap from="/raw_in" to="/air_temp" />
     <remap from="/filtered_out" to="/air_temp_filtered" />
     <param name="q" value="0.001" />
-    <param name="r" value="0.05" />
+    <param name="r" value="0.1" />
     <param name="var" value="0.1" />
   </node>
 
@@ -38,7 +38,7 @@
     <remap from="/raw_in" to="/humidity" />
     <remap from="/filtered_out" to="/humidity_filtered" />
     <param name="q" value="0.001" />
-    <param name="r" value="0.05" />
+    <param name="r" value="0.1" />
     <param name="var" value="0.1" />
   </node>
 
