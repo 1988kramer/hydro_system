@@ -11,12 +11,12 @@ from hydro_system.msg import MotorHatCmd
 def command_publisher():
   global motor
   global command_pub
-
+  '''
   if motor == 0:
     motor = 1
   else:
     motor = 0
-
+  '''
   msg = MotorHatCmd()
   msg.command = 'forward'
   msg.speed = 128
@@ -51,7 +51,7 @@ if __name__ == '__main__':
   rospy.init_node('motor_tester', anonymous=True)
   command_pub = rospy.Publisher('/motor_hat_cmd', MotorHatCmd, queue_size=1)
 
-  motor = 1
+  motor = 0
 
   while not rospy.is_shutdown():
     try:
