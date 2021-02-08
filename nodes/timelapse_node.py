@@ -12,8 +12,7 @@ import os
 class Timelapse:
   def __init__(self):
     rospy.init_node('timelapse', anonymous=True)
-    #self.camera = cv2.VideoCapture(0)
-    self.interval = 600 # default 10 min interval
+    self.interval = rospy.get_param('~interval', 600)
     self.intensity_thresh = 32
 
   def take_image(self):

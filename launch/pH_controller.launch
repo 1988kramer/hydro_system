@@ -56,4 +56,8 @@
     <param name="period" value="60" />
   </node>
 
+  <node pkg="hydro_system" type="timelapse_node.py" name="timelapse" >
+    <param name="interval" value="600" />
+  </node>
+
 </launch>
