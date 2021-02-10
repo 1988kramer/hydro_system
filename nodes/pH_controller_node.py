@@ -45,7 +45,7 @@ class pH_ControllerNode:
     self.retract_msg = MotorHatCmd()
     self.retract_msg.motor = 0
     self.retract_msg.speed = 128
-    self.rectract_msg.command = 'backward'
+    self.retract_msg.command = 'backward'
 
     self.stop_msg = MotorHatCmd()
     self.stop_msg.motor = 0
