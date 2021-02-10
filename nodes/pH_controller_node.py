@@ -55,10 +55,10 @@ class pH_ControllerNode:
 
   def ph_callback(self, msg):
 
-    stamp = rospy.Time.now()
+    stamp = rospy.Time.now().to_sec()
 
     # if not waiting for a previous adjustment to take effect
-    if stamp.to_sec() - self.last_adjust_time > self.adjust_duration:
+    if stamp - self.last_adjust_time > self.adjust_duration:
 
       with self.lock:
         diff = msg.value - self.set_point
@@ -75,7 +75,7 @@ class pH_ControllerNode:
             self.adjust(self.up_motor)
             self.log(stamp,1.0)
 
-      self.last_adjust_time = msg.header.stamp.to_sec()
+      self.last_adjust_time = msg.header.stamp
     
 
 
@@ -93,6 +93,8 @@ class pH_ControllerNode:
 
     self.motor_cmd_pub.publish(self.start_msg)
     rospy.sleep(8.0)
+    self.motor_cmd_pub.publish(self.stop_msg)
+    rospy.sleep(0.5)
     self.motor_cmd_pub.publish(self.retract_msg)
     rospy.sleep(5.0)
     self.motor_cmd_pub.publish(self.stop_msg)
