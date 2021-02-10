@@ -50,7 +50,7 @@
   </node> 
 
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
-    <param name="topics" value="/water_temp /water_temp_filtered /air_temp /air_temp_filtered /pH /pH_filtered /humidity /humidity_filtered /motor_hat_cmd" />
+    <param name="topics" value="/water_temp /water_temp_filtered /air_temp /air_temp_filtered /pH /pH_filtered /humidity /humidity_filtered" />
     <param name="period" value="60" />
   </node>
 

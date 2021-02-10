@@ -58,7 +58,7 @@ class pH_ControllerNode:
     stamp = rospy.Time.now()
 
     # if not waiting for a previous adjustment to take effect
-    if stamp - self.last_adjust_time > self.adjust_duration:
+    if stamp.to_sec() - self.last_adjust_time > self.adjust_duration:
 
       with self.lock:
         diff = msg.value - self.set_point
