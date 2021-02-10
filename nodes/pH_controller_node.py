@@ -98,7 +98,9 @@ class pH_ControllerNode:
     rospy.sleep(0.5)
     self.motor_cmd_pub.publish(self.retract_msg)
     rospy.sleep(5.0)
-    self.motor_cmd_pub.publish(self.stop_msg)
+    for i in range(5):
+      self.motor_cmd_pub.publish(self.stop_msg)
+      rospy.sleep(0.1)
 
 
   def change_set_point(self, req):
