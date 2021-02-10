@@ -30,10 +30,10 @@ class pH_ControllerNode:
 
     self.set_point = rospy.get_param('~set_point', 5.9)
     self.range = rospy.get_param('~range', 0.2)
+    self.adjust_duration = rospy.get_param('~adjust_duration', 1800)
 
     self.lock = threading.Lock()
     self.last_adjust_time = 0.0
-    self.adjust_duration = 7200.0
 
     self.up_motor = 1
     self.down_motor = 0
