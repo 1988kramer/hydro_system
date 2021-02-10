@@ -27,8 +27,8 @@ class pH_ControllerNode:
                                        ChangeSetPoint, 
                                        self.change_set_point)
 
-    self.set_point = 6.0
-    self.range = 0.2
+    self.set_point = rospy.get_param('~set_point', 5.9)
+    self.range = rospy.get_param('~range', 0.2)
 
     self.lock = threading.Lock()
     self.last_adjust_time = 0.0

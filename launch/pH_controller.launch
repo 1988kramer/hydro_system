@@ -42,15 +42,15 @@
     <param name="var" value="0.1" />
   </node>
 
-  <!-- 
   <node pkg="hydro_system" type="motor_hat_node.py" name="motor_hat" />
   
-  <node pkg="hydro_system" type="pH_controller_node.py" name="pH_controller" output="screen" /> 
-  -->
+  <node pkg="hydro_system" type="pH_controller_node.py" name="pH_controller" output="screen" >
+    <param name="set_point" value="5.9" />
+    <param name="range" value="0.2" />
+  </node> 
 
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
-    <param name="topics" value="/water_temp /water_temp_filtered /air_temp /air_temp_filtered /pH /pH_filtered /humidity /humidity_filtered" />
-    <!-- <param name="topics" value="/temp /temp_filtered" /> -->
+    <param name="topics" value="/water_temp /water_temp_filtered /air_temp /air_temp_filtered /pH /pH_filtered /humidity /humidity_filtered /motor_hat_cmd" />
     <param name="period" value="60" />
   </node>
 
