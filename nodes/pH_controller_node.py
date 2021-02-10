@@ -85,7 +85,7 @@ class pH_ControllerNode:
 
     self.start_msg.motor = motor
     self.stop_msg.motor = motor
-    self.rectract_msg = motor
+    self.retract_msg.motor = motor
 
     if motor == self.up_motor:
       rospy.logerr('motor up command')
@@ -98,9 +98,8 @@ class pH_ControllerNode:
     rospy.sleep(0.5)
     self.motor_cmd_pub.publish(self.retract_msg)
     rospy.sleep(5.0)
-    for i in range(5):
-      self.motor_cmd_pub.publish(self.stop_msg)
-      rospy.sleep(0.1)
+    self.motor_cmd_pub.publish(self.stop_msg)
+    
 
 
   def change_set_point(self, req):
