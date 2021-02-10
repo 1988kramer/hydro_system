@@ -9,6 +9,7 @@ from hydro_system.msg import StampedFloatWithVariance, MotorHatCmd
 from hydro_system.srv import ChangeSetPoint, ChangeSetPointResponse
 from std_srvs.srv import Empty
 import threading
+import os
 from datetime import datetime
 
 class pH_ControllerNode:
@@ -59,6 +60,8 @@ class pH_ControllerNode:
 
     # if not waiting for a previous adjustment to take effect
     if stamp - self.last_adjust_time > self.adjust_duration:
+      
+      self.last_adjust_time = msg.header.stamp
 
       with self.lock:
         diff = msg.value - self.set_point
@@ -74,8 +77,6 @@ class pH_ControllerNode:
             rospy.logerr('adjusting up')
             self.adjust(self.up_motor)
             self.log(stamp,1.0)
-
-      self.last_adjust_time = msg.header.stamp
     
 
 
