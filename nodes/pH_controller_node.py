@@ -93,7 +93,7 @@ class pH_ControllerNode:
       rospy.logerr('motor down command')
 
     self.motor_cmd_pub.publish(self.start_msg)
-    rospy.sleep(8.0)
+    rospy.sleep(7.5)
     self.motor_cmd_pub.publish(self.stop_msg)
     rospy.sleep(0.5)
     self.motor_cmd_pub.publish(self.retract_msg)
