@@ -86,7 +86,7 @@ class pH_ControllerNode:
     self.stop_msg.motor = motor
     self.rectract_msg = motor
 
-    if direction == 1.0:
+    if motor == self.up_motor:
       rospy.logerr('motor up command')
     else:
       rospy.logerr('motor down command')
