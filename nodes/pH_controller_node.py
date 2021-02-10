@@ -60,8 +60,8 @@ class pH_ControllerNode:
 
     # if not waiting for a previous adjustment to take effect
     if stamp - self.last_adjust_time > self.adjust_duration:
-      
-      self.last_adjust_time = msg.header.stamp
+
+      self.last_adjust_time = stamp
 
       with self.lock:
         diff = msg.value - self.set_point
