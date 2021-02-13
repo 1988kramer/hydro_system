@@ -34,7 +34,7 @@ class FilterNode:
       y_tilde = msg.value - self.x
 
       # reject outliers given a chi^2 confidence value
-      if self.chi2 > 0.0 and (y_tilde**2 / self.var) <= self.chi2:
+      if self.chi2 == 0.0 or (y_tilde**2 / self.var) <= self.chi2:
         dt = stamp - self.last_t
         self.last_t = stamp
         var_hat = self.var + self.q * dt
