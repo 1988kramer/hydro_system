@@ -20,7 +20,7 @@
     <param name="q" value="0.001" />
     <param name="r" value="0.1" />
     <param name="var" value="0.1" />
-    <param name="chi2" value="1.5" />
+    <param name="chi2" value="1.0" />
   </node>
 
   <node pkg="hydro_system" type="SHT31D_node.py" name="air_temp_humidity">
