@@ -2,7 +2,7 @@ import os
 import re
 
 if __name__ == '__main__':
-  log_path = '/home/akramer/logs/hydro'
+  log_path = '/home/pi/logs/'
   # get list of csv files
   csv_files = [f for f in os.listdir(log_path) if 
                 os.path.isfile(os.path.join(log_path,f)) and 
