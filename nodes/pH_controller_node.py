@@ -87,13 +87,13 @@ class pH_ControllerNode:
     self.stop_msg.motor = motor
     self.retract_msg.motor = motor
 
-    if motor == self.up_motor:
-      rospy.logerr('motor up command')
-    else:
-      rospy.logerr('motor down command')
-
     self.motor_cmd_pub.publish(self.start_msg)
-    rospy.sleep(8.5)
+
+    if motor == self.up_motor:
+      rospy.sleep(9.5)
+    else:
+      rospy.sleep(8.5)
+
     self.motor_cmd_pub.publish(self.stop_msg)
     rospy.sleep(0.5)
     self.motor_cmd_pub.publish(self.retract_msg)
