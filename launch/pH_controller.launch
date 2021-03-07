@@ -14,7 +14,7 @@
   </node>
   -->
 
-  <node pkg="hydro_system" type=median_filter.py" name="temp_filter" >
+  <node pkg="hydro_system" type="median_filter.py" name="temp_filter" >
     <remap from="/raw_in" to="/water_temp" />
     <remap from="/filtered_out" to="/water_temp_filtered" />
     <param name="width" value="30" />
@@ -33,7 +33,7 @@
   </node>
   -->
 
-  <node pkg="hydro_system" type=median_filter.py" name="pH_filter" >
+  <node pkg="hydro_system" type="median_filter.py" name="pH_filter" >
     <remap from="/raw_in" to="/pH" />
     <remap from="/filtered_out" to="/pH_filtered" />
     <param name="width" value="30" />
@@ -61,13 +61,13 @@
   </node>
   -->
 
-  <node pkg="hydro_system" type=median_filter.py" name="air_temp_filter" >
+  <node pkg="hydro_system" type="median_filter.py" name="air_temp_filter" >
     <remap from="/raw_in" to="/air_temp" />
     <remap from="/filtered_out" to="/air_temp_filtered" />
     <param name="width" value="30" />
   </node>
 
-  <node pkg="hydro_system" type=median_filter.py" name="pH_filter" >
+  <node pkg="hydro_system" type="median_filter.py" name="humidity_filter" >
     <remap from="/raw_in" to="/humidity" />
     <remap from="/filtered_out" to="/humidity_filtered" />
     <param name="width" value="30" />
