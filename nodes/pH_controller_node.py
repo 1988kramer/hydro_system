@@ -90,7 +90,7 @@ class pH_ControllerNode:
     self.motor_cmd_pub.publish(self.start_msg)
 
     if motor == self.up_motor:
-      rospy.sleep(14.0)
+      rospy.sleep(15.0)
     else:
       rospy.sleep(10.0)
 
