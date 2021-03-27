@@ -1,6 +1,6 @@
 <launch>
 
-  <node pkg="hydro_system" type="DS18B20_node.py" name="water_temp_sensor" >
+  <node pkg="hydro_system" type="DS18B20_node.py" name="water_temp_sensor" respawn="true" respawn_delay="30">
     <remap from="/temp" to="/water_temp" />
   </node>
 
