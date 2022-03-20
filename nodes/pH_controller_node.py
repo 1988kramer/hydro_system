@@ -117,7 +117,7 @@ class pH_ControllerNode:
     filename = '/home/pi/logs/pH_command_' + date_str + '.csv'
     with open(filename, 'a') as file:
       file.write('%.4f,%d' % (stamp, direction))
-    os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
+    #os.system('rclone copy ' + filename + ' remote_logs:personal\ projects/hydroponics/logs/')
     return []
 
 

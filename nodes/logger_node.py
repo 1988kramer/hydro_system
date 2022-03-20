@@ -9,7 +9,7 @@ from hydro_system.msg import StampedFloatWithVariance
 class Logger:
 
   def __init__(self):
-
+    
     rospy.init_node('logger', anonymous=True)
     self.subs = []
     topics_str = rospy.get_param('~topics')
@@ -49,12 +49,12 @@ class Logger:
 
       if topic not in self.last_fnames.keys():
         self.last_fnames[topic] = filename
-        
+      '''  
       if filename != self.last_fnames[topic]:
         os.system('rclone copy ' + self.last_fnames[topic] 
                   + ' remote_logs:personal\ projects/hydroponics/logs/')
         self.last_fnames[topic] = filename
-
+      '''
 
 if __name__ == '__main__':
   logger = Logger()

@@ -79,7 +79,7 @@ class pH_Node:
 
   def publish_ph(self):
     with self.i2c_lock:
-      data = self.get_data()  
+      data = self.get_data()
     if data[0] != '':
       #rospy.loginfo('publishing pH of %.2f and temp of %.2f' % (data[0],self.temp))
       pH_msg = StampedFloatWithVariance()

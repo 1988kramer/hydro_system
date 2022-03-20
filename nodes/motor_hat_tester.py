@@ -51,7 +51,7 @@ if __name__ == '__main__':
   rospy.init_node('motor_tester', anonymous=True)
   command_pub = rospy.Publisher('/motor_hat_cmd', MotorHatCmd, queue_size=1)
 
-  motor = 0
+  motor = 1
 
   while not rospy.is_shutdown():
     try:

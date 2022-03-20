@@ -76,18 +76,22 @@
   <node pkg="hydro_system" type="motor_hat_node.py" name="motor_hat" />
   
   <node pkg="hydro_system" type="pH_controller_node.py" name="pH_controller" output="screen" >
-    <param name="set_point" value="6.0" />
+    <param name="set_point" value="5.8" />
     <param name="range" value="0.2" />
     <param name="adjust_duration" value="1800" />
   </node> 
 
+  
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
     <param name="topics" value="/water_temp /water_temp_filtered /air_temp /air_temp_filtered /pH /pH_filtered /humidity /humidity_filtered" />
     <param name="period" value="60" />
   </node>
+  
 
+  <!--
   <node pkg="hydro_system" type="timelapse_node.py" name="timelapse" >
     <param name="interval" value="600" />
   </node>
+  -->
 
 </launch>
