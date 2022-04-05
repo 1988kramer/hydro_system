@@ -128,6 +128,8 @@ class SHT31D_Node:
     else:
       rospy.sleep(2.0)
 
+    self.seq += 1
+
 
 if __name__ == '__main__':
   
