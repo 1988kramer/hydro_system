@@ -4,7 +4,7 @@
 ROS node for taking readings from the MPL3115A2 barometric pressure sensor
 and converting them to water depth.
 
-Uses code from the example found at https://github.com/adafruit/Adafruit_Learning_System_Guides/blob/master/Raspberry_Pi_DS18B20_Temperature_Sensing/thermometer.py
+Uses code from the example found at https://gist.github.com/pepijndevos/c3646ef6652e0f0342dd
 '''
 
 import rospy
