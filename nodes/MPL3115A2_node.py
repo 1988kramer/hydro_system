@@ -84,9 +84,10 @@ class MPL3115A2_Node:
                                      StampedFloatWithVariance,
                                      queue_size=1)
 
+    self.barometric_pressure_kPa = 101.0
     self.device_address = 0x60
     self.i2c = smbus.SMBus(1)
-    api_key = '28faa8bd8c0e60385037b96d4c196eea'
+    api_key = 'dd'
     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
     city_name = 'seattle'
     self.open_weather_api_url = base_url + 'appid=' + api_key + '&q=' + city_name
@@ -106,7 +107,6 @@ class MPL3115A2_Node:
                              MPL3115A2_PT_DATA_CFG_TDEFE |
                              MPL3115A2_PT_DATA_CFG_PDEFE |
                              MPL3115A2_PT_DATA_CFG_DREM)
-    self.reset()
 
   def poll(self):
     sta = 0
@@ -131,18 +131,19 @@ class MPL3115A2_Node:
   def get_openweathermap_pressure(self):
     response = requests.get(self.open_weather_api_url)
     x = response.json()
-    pressure_kPa = x['pressure'] / 10.0 # convert from hPa to kPa
-    return pressure_kPa
+    self.barometric_pressure_kPa = x['main']['pressure'] / 10.0 # convert from hPa to kPa
 
   def publish_data(self):
-    sensor_pressure = self.read_pressure()
-    print('sensor pressure: %03.f' % sensor_pressure)
-    #openweathermap_pressure = self.get_openweathermap_pressure()
-    #print('openweathermap pressure %0.3f' % openweathermap_pressure)
+    sensor_pressure_Pa = self.read_pressure()
+    sensor_pressure_kPa = sensor_pressure_Pa / 1000.0
+    print('sensor pressure: %03.f' % sensor_pressure_Pa)
+    if self.seq % 10 == 0:
+        self.get_openweathermap_pressure()
+    print('openweathermap pressure %0.3f' % self.barometric_pressure_kPa)
     pressure_msg = StampedFloatWithVariance()
     pressure_msg.header.seq = self.seq
     pressure_msg.header.stamp = rospy.Time.now()
-    pressure_msg.value = sensor_pressure #abs(pressure - openweathermap_pressure)
+    pressure_msg.value = sensor_pressure_kPa - self.barometric_pressure_kPa
 
     self.depth_pub.publish(pressure_msg)
 
