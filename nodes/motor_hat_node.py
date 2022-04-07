@@ -15,7 +15,7 @@ class MotorHatNode:
   def __init__(self):
     rospy.init_node('motor_hat', anonymous=True, disable_signals=True)
     self.cmd_sub = rospy.Subscriber('/motor_hat_cmd', MotorHatCmd, self.cmd_callback, queue_size=1)
-    self.motor_hat = Adafruit_MotorHAT(addr=0x60)
+    self.motor_hat = Adafruit_MotorHAT(addr=0x61)
     self.num_motors = 4
 
   def shutdown(self, sig, frame):
