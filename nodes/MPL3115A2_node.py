@@ -91,7 +91,7 @@ class MPL3115A2_Node:
     city_name = 'seattle'
     self.open_weather_api_url = base_url + 'appid=' + api_key + '&q=' + city_name
 
-    whoami = bus.read_byte_data(self.device_address, MPL3115A2_WHOAMI)
+    whoami = self.i2c.read_byte_data(self.device_address, MPL3115A2_WHOAMI)
     if whoami != 0xc4:
       print('Unable to connect to MPL3115A2 device')
 
