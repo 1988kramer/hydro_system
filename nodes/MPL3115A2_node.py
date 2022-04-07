@@ -137,12 +137,12 @@ class MPL3115A2_Node:
   def publish_data(self):
     sensor_pressure = self.read_pressure()
     print('sensor pressure: %03.f' % sensor_pressure)
-    openweathermap_pressure = self.get_openweathermap_pressure()
-    print('openweathermap pressure %0.3f' % openweathermap_pressure)
+    #openweathermap_pressure = self.get_openweathermap_pressure()
+    #print('openweathermap pressure %0.3f' % openweathermap_pressure)
     pressure_msg = StampedFloatWithVariance()
     pressure_msg.header.seq = self.seq
     pressure_msg.header.stamp = rospy.Time.now()
-    pressure_msg.value = abs(pressure - openweathermap_pressure)
+    pressure_msg.value = sensor_pressure #abs(pressure - openweathermap_pressure)
 
     self.depth_pub.publish(pressure_msg)
 
