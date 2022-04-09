@@ -129,9 +129,14 @@ class MPL3115A2_Node:
     return float((msb << 16) | (csb << 8) | lsb) / 64.0
 
   def get_openweathermap_pressure(self):
-    response = requests.get(self.open_weather_api_url)
-    x = response.json()
-    self.barometric_pressure_kPa = x['main']['pressure'] / 10.0 # convert from hPa to kPa
+    try:
+      response = requests.get(self.open_weather_api_url)
+      x = response.json()
+      self.barometric_pressure_kPa = x['main']['pressure'] / 10.0 # convert from hPa to kPa
+    except:
+      print("Failed to get barometric pressure from " + 
+            str(self.open_weather_api_url))
+
 
   def publish_data(self):
     sensor_pressure_Pa = self.read_pressure()
