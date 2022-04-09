@@ -11,6 +11,7 @@ import rospy
 import smbus
 import requests
 import json
+import yaml
 from hydro_system.msg import StampedFloatWithVariance
 
 
@@ -87,18 +88,11 @@ class MPL3115A2_Node:
     self.barometric_pressure_kPa = 101.0
     self.device_address = 0x60
     self.i2c = smbus.SMBus(1)
-    keys_file = self.set_point = rospy.get_param('~keys_file', 5.9)
+    keys_file = rospy.get_param('~keys_file')
     api_key = ''
     with open(keys_file, 'r') as f:
-      line = f.readline()
-      tokens = f.split(',')
-      while f[0] is not 'openweathermap':
-        line = f.readline()
-        tokens = f.split()
-      api_key = f[1]
-    if api_key is '':
-      print('api key for openweathermap not found')
-      exit()
+      keys = yaml.safe_load(f)
+      api_key = keys['openweathermap']
     base_url = 'http://api.openweathermap.org/data/2.5/weather?'
     city_name = 'seattle'
     self.open_weather_api_url = base_url + 'appid=' + api_key + '&q=' + city_name
@@ -152,10 +146,8 @@ class MPL3115A2_Node:
   def publish_data(self):
     sensor_pressure_Pa = self.read_pressure()
     sensor_pressure_kPa = sensor_pressure_Pa / 1000.0
-    print('sensor pressure: %03.f' % sensor_pressure_Pa)
     if self.seq % 10 == 0:
         self.get_openweathermap_pressure()
-    print('openweathermap pressure %0.3f' % self.barometric_pressure_kPa)
     pressure_msg = StampedFloatWithVariance()
     pressure_msg.header.seq = self.seq
     pressure_msg.header.stamp = rospy.Time.now()

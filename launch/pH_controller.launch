@@ -82,7 +82,7 @@
   </node> 
 
   <node pkg="hydro_system" type="MPL3115A2_node.py" name="depth_sensor" output="screen" >
-    <param name="keys_file" value="$(find hydro_system)/keys.txt" />
+    <param name="keys_file" value="$(find hydro_system)/keys.yaml" />
   </node>
   
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
