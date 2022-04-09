@@ -81,7 +81,9 @@
     <param name="adjust_duration" value="1800" />
   </node> 
 
-  <node pkg="hydro_system" type="MPL3115A2_node.py" name="depth_sensor" output="screen" />
+  <node pkg="hydro_system" type="MPL3115A2_node.py" name="depth_sensor" output="screen" >
+    <param name="keys_file" value="$(find hydro_system)/keys.txt" />
+  </node>
   
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
     <param name="topics" value="/water_temp /water_temp_filtered /air_temp /air_temp_filtered /pH /pH_filtered /humidity /humidity_filtered /depth" />

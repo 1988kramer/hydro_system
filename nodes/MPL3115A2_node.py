@@ -87,8 +87,9 @@ class MPL3115A2_Node:
     self.barometric_pressure_kPa = 101.0
     self.device_address = 0x60
     self.i2c = smbus.SMBus(1)
+    keys_file = self.set_point = rospy.get_param('~keys_file', 5.9)
     api_key = ''
-    with open('../keys.txt', 'r') as f:
+    with open(keys_file, 'r') as f:
       line = f.readline()
       tokens = f.split(',')
       while f[0] is not 'openweathermap':
