@@ -92,15 +92,16 @@
   </node>
   
   <node pkg="hydro_system" type="logger_node.py" name="logger" >
-    <param name="topics" value="/water_temp /water_temp_filtered /air_temp /air_temp_filtered /pH /pH_filtered /humidity /humidity_filtered" />
+    <param name="topics" value="/water_temp /water_temp_filtered /air_temp /air_temp_filtered /pH /pH_filtered /humidity /humidity_filtered /depth /depth_filtered" />
     <param name="period" value="60" />
   </node>
 
+  <!--
   <node pkg="hydro_system" type="logger_node.py" name="depth_logger" >
     <param name="topics" value="/depth, /depth_filtered" />
     <param name="period" value="2" />
   </node>
-  
+  -->
 
   <!--
   <node pkg="hydro_system" type="timelapse_node.py" name="timelapse" >
