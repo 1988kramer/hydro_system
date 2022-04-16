@@ -77,7 +77,8 @@ def update_plots_live(n):
     pH_title = 'Water pH (current: %.2f)' % pH_filtered[-1,1]
     air_temp_title = 'Air Temperature (current: %.2f' % air_temp_filtered[-1,1]
     air_temp_title += deg_sign + 'C)'
-    humidity_title = 'Relative Humidity (current: %.2f\%)' % humidity_filtered[-1,1]
+    humidity_title = 'Relative Humidity (current: %.2f' % humidity_filtered[-1,1]
+    humidity_title +=  '%)'
     depth_title = 'Water Depth (current: %.1f inches)' % water_depth[-1,1]
 
     # Create the graph with subplots
