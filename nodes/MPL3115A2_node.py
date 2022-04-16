@@ -86,6 +86,8 @@ class MPL3115A2_Node:
                                      queue_size=1)
 
     self.barometric_pressure_kPa = 101.0
+    self.altitude_offset_kPa = -0.8052
+    self.in_h2o_per_kPa = 4.01865
     self.device_address = 0x60
     self.i2c = smbus.SMBus(1)
     keys_file = rospy.get_param('~keys_file')
@@ -148,10 +150,15 @@ class MPL3115A2_Node:
     sensor_pressure_kPa = sensor_pressure_Pa / 1000.0
     if self.seq % 10 == 0:
         self.get_openweathermap_pressure()
+
+    pressure_diff_kPa = sensor_pressure_kPa - self.barometric_pressure_kPa
+    pressure_diff_altitude_offset_kPa = pressure_diff_kPa + self.altitude_offset_kPa
+    pressure_diff_in_h2o = pressure_diff_altitude_offset_kPa * self.in_h2o_per_kPa
+
     pressure_msg = StampedFloatWithVariance()
     pressure_msg.header.seq = self.seq
     pressure_msg.header.stamp = rospy.Time.now()
-    pressure_msg.value = sensor_pressure_kPa - self.barometric_pressure_kPa
+    pressure_msg.value = pressure_diff_in_h2o
 
     self.depth_pub.publish(pressure_msg)
 
