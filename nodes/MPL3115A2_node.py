@@ -152,9 +152,9 @@ class MPL3115A2_Node:
         self.get_openweathermap_pressure()
 
     pressure_diff_kPa = sensor_pressure_kPa - self.barometric_pressure_kPa
-    pressure_diff_altitude_offset_kPa = pressure_diff_kPa + self.altitude_offset_kPa
+    pressure_diff_altitude_offset_kPa = pressure_diff_kPa - self.altitude_offset_kPa
     pressure_diff_in_h2o = pressure_diff_altitude_offset_kPa * self.in_h2o_per_kPa
-
+    
     pressure_msg = StampedFloatWithVariance()
     pressure_msg.header.seq = self.seq
     pressure_msg.header.stamp = rospy.Time.now()
