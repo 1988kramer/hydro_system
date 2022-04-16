@@ -68,6 +68,7 @@ def update_plots_live(n):
     pH, pH_filtered = get_data('pH')
     air_temp, air_temp_filtered = get_data('air_temp')
     humidity, humidity_filtered = get_data('humidity')
+    water_depth, water_depth_filtered = get_data('depth')
 
     deg_sign = u'\N{DEGREE SIGN}'
 
@@ -76,12 +77,12 @@ def update_plots_live(n):
     pH_title = 'Water pH (current: %.2f)' % pH_filtered[-1,1]
     air_temp_title = 'Air Temperature (current: %.2f' % air_temp_filtered[-1,1]
     air_temp_title += deg_sign + 'C)'
-    humidity_title = 'Relative Humidity (current: %.2f' % humidity_filtered[-1,1]
-    humidity_title += deg_sign + '%)'
+    humidity_title = 'Relative Humidity (current: %.2f%)' % humidity_filtered[-1,1]
+    depth_title = 'Water Depth (current: %.1f inches)' % water_depth[-1,1]
 
     # Create the graph with subplots
-    fig = plotly.subplots.make_subplots(rows=4, cols=1, vertical_spacing=0.1,
-            subplot_titles=(pH_title, water_temp_title, air_temp_title, humidity_title))
+    fig = plotly.subplots.make_subplots(rows=5, cols=1, vertical_spacing=0.1,
+            subplot_titles=(pH_title, water_temp_title, air_temp_title, humidity_title, depth_title))
     fig['layout']['margin'] = {
         'l': 30, 'r': 10, 'b': 30, 't': 30
     }
@@ -161,14 +162,35 @@ def update_plots_live(n):
         'showlegend': False
     }, 4, 1)
 
-    fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=2,col=1)
-    fig.update_yaxes(title_text='pH',row=1,col=1)
-    fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)',row=3,col=1)
-    fig.update_yaxes(title_text='Humidity (%)',row=4,col=1)
-    fig.update_xaxes(title_text='time (hours)',row=1,col=1)
-    fig.update_xaxes(title_text='time (hours)',row=2,col=1)
-    fig.update_xaxes(title_text='time (hours)',row=3,col=1)
-    fig.update_xaxes(title_text='time (hours)',row=4,col=1)
+    fig.append_trace({
+        'x': water_depth[:,0],
+        'y': water_depth[:,1],
+        'name': 'water depth raw',
+        'mode': 'lines',
+        'type': 'scatter',
+        'line': {'dash': 'dash', 'color': 'red'},
+        'showlegend': False
+    }, 5, 1)
+    fig.append_trace({
+        'x': water_depth_filtered[:,0],
+        'y': water_depth_filtered[:,1],
+        'name': 'water depth filtered',
+        'mode': 'lines',
+        'type': 'scatter',
+        'line': {'dash': 'solid', 'color': 'blue'},
+        'showlegend': False
+    }, 5, 1)
+
+    fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)', row=2, col=1)
+    fig.update_yaxes(title_text='pH', row=1, col=1)
+    fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)', row=3, col=1)
+    fig.update_yaxes(title_text='Humidity (%)', row=4, col=1)
+    fig.update_yaxes(title_text='depth (inches)',row=5,col=1)
+    fig.update_xaxes(title_text='time (hours)', row=1, col=1)
+    fig.update_xaxes(title_text='time (hours)', row=2, col=1)
+    fig.update_xaxes(title_text='time (hours)', row=3, col=1)
+    fig.update_xaxes(title_text='time (hours)', row=4, col=1)
+    fig.update_xaxes(title_text='time (hours)', row=5, col=1)
     fig.update_layout(height=1200)
 
 
