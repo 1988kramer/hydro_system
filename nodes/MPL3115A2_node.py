@@ -126,9 +126,7 @@ class MPL3115A2_Node:
                                     MPL3115A2_REGISTER_STATUS)
 
   def read_water_pressure(self):
-    print('setting multiplexer')
     self.set_multiplexer_index(self.depth_sensor_idx)
-    print('reading pressure')
     return self.read_pressure()
 
 
