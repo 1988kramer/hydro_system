@@ -89,19 +89,9 @@ class MPL3115A2_Node:
     self.depth_sensor_idx = 0b00000001
     self.barometric_sensor_idx = 0b00000010
     self.i2c = smbus.SMBus(1)
-    keys_file = rospy.get_param('~keys_file')
-    api_key = ''
-    with open(keys_file, 'r') as f:
-      keys = yaml.safe_load(f)
-      api_key = keys['openweathermap']
-    base_url = 'http://api.openweathermap.org/data/2.5/weather?'
-    city_name = 'seattle'
-    self.open_weather_api_url = base_url + 'appid=' + api_key + '&q=' + city_name
 
-    print('setting up depth sensor')
     self.set_multiplexer_index(self.depth_sensor_idx)
     self.setup_sensor()
-    print('setting up barometric sensor')
     self.set_multiplexer_index(self.barometric_sensor_idx)
     self.setup_sensor()
     
@@ -123,9 +113,11 @@ class MPL3115A2_Node:
                              MPL3115A2_PT_DATA_CFG_PDEFE |
                              MPL3115A2_PT_DATA_CFG_DREM)
 
+
   def set_multiplexer_index(self, index):
     self.i2c.write_byte(self.multiplexer_address, index)
     rospy.sleep(0.01)
+
 
   def poll(self):
     sta = 0
@@ -139,9 +131,11 @@ class MPL3115A2_Node:
     print('reading pressure')
     return self.read_pressure()
 
+
   def read_barometric_pressure(self):
     self.set_multiplexer_index(self.barometric_sensor_idx)
     return self.read_pressure()
+
 
   def read_pressure(self):
     self.i2c.write_byte_data(self.device_address,
@@ -156,31 +150,15 @@ class MPL3115A2_Node:
                                                  3)
     return float((msb << 16) | (csb << 8) | lsb) / 64.0
 
-  def get_openweathermap_pressure(self):
-    try:
-      response = requests.get(self.open_weather_api_url)
-      x = response.json()
-      self.barometric_pressure_kPa = x['main']['pressure'] / 10.0 # convert from hPa to kPa
-    except:
-      print("Failed to get barometric pressure from " + 
-            str(self.open_weather_api_url))
-
 
   def publish_data(self):
     sensor_pressure_Pa = self.read_water_pressure()
     sensor_pressure_kPa = sensor_pressure_Pa / 1.0e3
-    print('sensor pressure %.2f' % sensor_pressure_kPa)
 
     barometric_pressure_Pa = self.read_barometric_pressure()
-    self.barometric_pressure_kPa = barometric_pressure_Pa / 1.0e3
-    print('barometric pressure %.2f' % self.barometric_pressure_kPa)
+    barometric_pressure_kPa = barometric_pressure_Pa / 1.0e3
 
-    #if self.seq % 10 == 0:
-    #    self.get_openweathermap_pressure()
-
-    pressure_diff_kPa = sensor_pressure_kPa - self.barometric_pressure_kPa
-    #pressure_diff_altitude_offset_kPa = pressure_diff_kPa - self.altitude_offset_kPa
-    #pressure_diff_in_h2o = pressure_diff_altitude_offset_kPa * self.in_h2o_per_kPa
+    pressure_diff_kPa = sensor_pressure_kPa - barometric_pressure_kPa
     pressure_diff_in_h2o = pressure_diff_kPa * self.in_h2o_per_kPa
     
     pressure_msg = StampedFloatWithVariance()
