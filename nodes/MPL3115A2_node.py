@@ -98,6 +98,15 @@ class MPL3115A2_Node:
     city_name = 'seattle'
     self.open_weather_api_url = base_url + 'appid=' + api_key + '&q=' + city_name
 
+    print('setting up depth sensor')
+    self.set_multiplexer_index(self.depth_sensor_idx)
+    self.setup_sensor()
+    print('setting up barometric sensor')
+    self.set_multiplexer_index(self.barometric_sensor_idx)
+    self.setup_sensor()
+    
+
+  def setup_sensor(self):
     whoami = self.i2c.read_byte_data(self.device_address, MPL3115A2_WHOAMI)
     if whoami != 0xc4:
       print('Unable to connect to MPL3115A2 device')
@@ -114,22 +123,24 @@ class MPL3115A2_Node:
                              MPL3115A2_PT_DATA_CFG_PDEFE |
                              MPL3115A2_PT_DATA_CFG_DREM)
 
+  def set_multiplexer_index(self, index):
+    self.i2c.write_byte(self.multiplexer_address, index)
+    rospy.sleep(0.01)
+
   def poll(self):
     sta = 0
     while not (sta & MPL3115A2_REGISTER_STATUS_PDR):
       sta = self.i2c.read_byte_data(self.device_address, 
                                     MPL3115A2_REGISTER_STATUS)
 
-  def read_water_pressure(self):\
+  def read_water_pressure(self):
     print('setting multiplexer')
-    self.i2c.write_byte(self.multiplexer_address, self.depth_sensor_idx)
-    rospy.sleep(0.01)
+    self.set_multiplexer_index(self.depth_sensor_idx)
     print('reading pressure')
     return self.read_pressure()
 
   def read_barometric_pressure(self):
-    self.i2c.write_byte(self.multiplexer_address, self.barometric_sensor_idx)
-    rospy.sleep(0.01)
+    self.set_multiplexer_index(self.barometric_sensor_idx)
     return self.read_pressure()
 
   def read_pressure(self):
