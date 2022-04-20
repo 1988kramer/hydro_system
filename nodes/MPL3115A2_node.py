@@ -86,8 +86,8 @@ class MPL3115A2_Node:
     self.in_h2o_per_kPa = 4.01865
     self.device_address = 0x60
     self.multiplexer_address = 0x70
-    self.depth_sensor_idx = 0x00
-    self.barometric_sensor_idx = 0x01
+    self.depth_sensor_idx = 0b00000001
+    self.barometric_sensor_idx = 0b00000010
     self.i2c = smbus.SMBus(1)
     keys_file = rospy.get_param('~keys_file')
     api_key = ''
