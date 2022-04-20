@@ -120,12 +120,16 @@ class MPL3115A2_Node:
       sta = self.i2c.read_byte_data(self.device_address, 
                                     MPL3115A2_REGISTER_STATUS)
 
-  def read_water_pressure(self):
+  def read_water_pressure(self):\
+    print('setting multiplexer')
     self.i2c.write_byte(self.multiplexer_address, self.depth_sensor_idx)
+    rospy.sleep(0.01)
+    print('reading pressure')
     return self.read_pressure()
 
   def read_barometric_pressure(self):
     self.i2c.write_byte(self.multiplexer_address, self.barometric_sensor_idx)
+    rospy.sleep(0.01)
     return self.read_pressure()
 
   def read_pressure(self):
