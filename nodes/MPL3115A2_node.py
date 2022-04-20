@@ -154,9 +154,11 @@ class MPL3115A2_Node:
   def publish_data(self):
     sensor_pressure_Pa = self.read_water_pressure()
     sensor_pressure_kPa = sensor_pressure_Pa / 1.0e3
+    print('sensor pressure %.2f' % sensor_pressure_kPa)
 
     barometric_pressure_Pa = self.read_barometric_pressure()
     self.barometric_pressure_kPa = barometric_pressure_Pa / 1.0e3
+    print('barometric pressure %.2f' % barometric_pressure_kPa)
 
     #if self.seq % 10 == 0:
     #    self.get_openweathermap_pressure()
