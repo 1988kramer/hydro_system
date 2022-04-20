@@ -15,10 +15,6 @@ import yaml
 from hydro_system.msg import StampedFloatWithVariance
 
 
-#I2C ADDRESS/BITS
-
-MPL3115A2_ADDRESS = (0x60)
-
 #REGISTERS
 
 MPL3115A2_REGISTER_STATUS = (0x00)
@@ -89,6 +85,9 @@ class MPL3115A2_Node:
     self.altitude_offset_kPa = -0.8052
     self.in_h2o_per_kPa = 4.01865
     self.device_address = 0x60
+    self.multiplexer_address = 0x70
+    self.depth_sensor_idx = 0x00
+    self.barometric_sensor_idx = 0x01
     self.i2c = smbus.SMBus(1)
     keys_file = rospy.get_param('~keys_file')
     api_key = ''
@@ -121,6 +120,13 @@ class MPL3115A2_Node:
       sta = self.i2c.read_byte_data(self.device_address, 
                                     MPL3115A2_REGISTER_STATUS)
 
+  def read_water_pressure(self):
+    self.i2c.write_byte(self.multiplexer_address, self.depth_sensor_idx)
+    return self.read_pressure()
+
+  def read_barometric_pressure(self):
+    self.i2c.write_byte(self.multiplexer_address, self.barometric_sensor_idx)
+    return self.read_pressure()
 
   def read_pressure(self):
     self.i2c.write_byte_data(self.device_address,
@@ -146,14 +152,19 @@ class MPL3115A2_Node:
 
 
   def publish_data(self):
-    sensor_pressure_Pa = self.read_pressure()
-    sensor_pressure_kPa = sensor_pressure_Pa / 1000.0
-    if self.seq % 10 == 0:
-        self.get_openweathermap_pressure()
+    sensor_pressure_Pa = self.read_water_pressure()
+    sensor_pressure_kPa = sensor_pressure_Pa / 1.0e3
+
+    barometric_pressure_Pa = self.read_barometric_pressure()
+    self.barometric_pressure_kPa = barometric_pressure_Pa / 1.0e3
+
+    #if self.seq % 10 == 0:
+    #    self.get_openweathermap_pressure()
 
     pressure_diff_kPa = sensor_pressure_kPa - self.barometric_pressure_kPa
-    pressure_diff_altitude_offset_kPa = pressure_diff_kPa - self.altitude_offset_kPa
-    pressure_diff_in_h2o = pressure_diff_altitude_offset_kPa * self.in_h2o_per_kPa
+    #pressure_diff_altitude_offset_kPa = pressure_diff_kPa - self.altitude_offset_kPa
+    #pressure_diff_in_h2o = pressure_diff_altitude_offset_kPa * self.in_h2o_per_kPa
+    pressure_diff_in_h2o = presure_diff_kPa * self.in_h2o_per_kPa
     
     pressure_msg = StampedFloatWithVariance()
     pressure_msg.header.seq = self.seq
