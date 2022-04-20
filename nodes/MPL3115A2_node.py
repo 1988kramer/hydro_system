@@ -173,7 +173,7 @@ class MPL3115A2_Node:
 
     barometric_pressure_Pa = self.read_barometric_pressure()
     self.barometric_pressure_kPa = barometric_pressure_Pa / 1.0e3
-    print('barometric pressure %.2f' % barometric_pressure_kPa)
+    print('barometric pressure %.2f' % self.barometric_pressure_kPa)
 
     #if self.seq % 10 == 0:
     #    self.get_openweathermap_pressure()
@@ -181,7 +181,7 @@ class MPL3115A2_Node:
     pressure_diff_kPa = sensor_pressure_kPa - self.barometric_pressure_kPa
     #pressure_diff_altitude_offset_kPa = pressure_diff_kPa - self.altitude_offset_kPa
     #pressure_diff_in_h2o = pressure_diff_altitude_offset_kPa * self.in_h2o_per_kPa
-    pressure_diff_in_h2o = presure_diff_kPa * self.in_h2o_per_kPa
+    pressure_diff_in_h2o = pressure_diff_kPa * self.in_h2o_per_kPa
     
     pressure_msg = StampedFloatWithVariance()
     pressure_msg.header.seq = self.seq
