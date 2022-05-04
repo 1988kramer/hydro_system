@@ -162,10 +162,10 @@ class MPL3115A2_Node:
     pressure_msg.header.stamp = rospy.Time.now()
     pressure_msg.value = water_volume_in_liters
 
-    with open('/home/pi/logs/pressure_kPa.txt', 'a') as f:
-      f.write('%.4f,%.4f,%.4f\n' % (pressure_msg.header.stamp.to_sec(), 
-                                    sensor_pressure_kPa, 
-                                    barometric_pressure_kPa))
+    #with open('/home/pi/logs/pressure_kPa.txt', 'a') as f:
+    #  f.write('%.4f,%.4f,%.4f\n' % (pressure_msg.header.stamp.to_sec(), 
+    #                                sensor_pressure_kPa, 
+    #                                barometric_pressure_kPa))
 
     self.depth_pub.publish(pressure_msg)
 
