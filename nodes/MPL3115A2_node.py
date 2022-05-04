@@ -81,9 +81,7 @@ class MPL3115A2_Node:
                                      StampedFloatWithVariance,
                                      queue_size=1)
 
-    self.barometric_pressure_kPa = 101.0
-    self.altitude_offset_kPa = -0.8052
-    self.in_h2o_per_kPa = 4.01865
+    self.liters_h2o_per_kPa = 6.25513
     self.device_address = 0x60
     self.multiplexer_address = 0x70
     self.depth_sensor_idx = 0b00000001
@@ -157,12 +155,12 @@ class MPL3115A2_Node:
     barometric_pressure_kPa = barometric_pressure_Pa / 1.0e3
 
     pressure_diff_kPa = sensor_pressure_kPa - barometric_pressure_kPa
-    pressure_diff_in_h2o = pressure_diff_kPa * self.in_h2o_per_kPa
+    water_volume_in_liters = pressure_diff_kPa * self.liters_h2o_per_kPa
     
     pressure_msg = StampedFloatWithVariance()
     pressure_msg.header.seq = self.seq
     pressure_msg.header.stamp = rospy.Time.now()
-    pressure_msg.value = pressure_diff_in_h2o
+    pressure_msg.value = water_volume_in_liters
 
     with open('/home/pi/logs/pressure_kPa.txt', 'a') as f:
       f.write('%.4f,%.4f,%.4f\n' % (pressure_msg.header.stamp.to_sec(), 
