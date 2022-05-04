@@ -55,6 +55,11 @@ def get_data(name):
 
     return data, data_filtered
 
+def get_y_range(data, offset = 1):
+    lower = min(np.min(data[:,1]) - offset/2.0, np.mean(data[:,1] - offset))
+    upper = max(np.max(data[:,1]) + offset/2.0, np.mean(data[:,1] + offset))
+    return [lower, upper]
+
 
 # Multiple components can update everytime interval gets fired.
 @app.callback(Output('live-update-graph', 'figure'),
@@ -102,6 +107,7 @@ def update_plots_live(n):
         'type': 'scatter',
         'line': {'dash': 'solid', 'color': 'blue'}
     }, 2, 1)
+    fig.update_yaxes(range=get_y_range(water_temp_filtered, 5), row=2, col=1)
     
     fig.append_trace({
         'x': pH[:,0],
@@ -121,6 +127,7 @@ def update_plots_live(n):
         'line': {'dash': 'solid', 'color': 'blue'},
         'showlegend': False
     }, 1, 1)
+    fig.update_yaxes(range=get_y_range(pH_filtered, 1), row=1, col=1)
 
     fig.append_trace({
         'x': air_temp[:,0],
@@ -140,6 +147,7 @@ def update_plots_live(n):
         'line': {'dash': 'solid', 'color': 'blue'},
         'showlegend': False
     }, 3, 1)
+    fig.update_yaxes(range=get_y_range(air_temp_filtered, 5), row=3, col=1)
 
     fig.append_trace({
         'x': humidity[:,0],
@@ -159,6 +167,7 @@ def update_plots_live(n):
         'line': {'dash': 'solid', 'color': 'blue'},
         'showlegend': False
     }, 4, 1)
+    fig.update_yaxes(range=get_y_range(humidity_filtered, 5), row=4, col=1)
 
     fig.append_trace({
         'x': water_depth[:,0],
@@ -178,6 +187,7 @@ def update_plots_live(n):
         'line': {'dash': 'solid', 'color': 'blue'},
         'showlegend': False
     }, 5, 1)
+    fig.update_yaxes(range=get_y_range(water_depth_filtered, 5), row=5, col=1)
 
     fig.update_yaxes(title_text='temperature (' + deg_sign + 'C)', row=2, col=1)
     fig.update_yaxes(title_text='pH', row=1, col=1)
