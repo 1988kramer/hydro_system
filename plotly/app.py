@@ -56,8 +56,8 @@ def get_data(name):
     return data, data_filtered
 
 def get_y_range(data, offset = 1):
-    lower = min(np.min(data[:,1]) - offset/2.0, np.mean(data[:,1] - offset))
-    upper = max(np.max(data[:,1]) + offset/2.0, np.mean(data[:,1] + offset))
+    lower = max(np.min(data[:,1]) - offset/2.0, np.median(data[:,1] - offset))
+    upper = min(np.max(data[:,1]) + offset/2.0, np.median(data[:,1] + offset))
     return [lower, upper]
 
 
