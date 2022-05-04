@@ -40,7 +40,7 @@ def get_data(name):
     data = np.loadtxt(data_today_fname, delimiter=',')
     if os.path.isfile(data_yesterday_fname):
         data_yesterday = np.loadtxt(data_yesterday_fname, delimiter=',')
-        data = np.concatenate((data_yesterday,data_today))
+        data = np.concatenate((data_yesterday,data))
     if os.path.isfile(data_day_before_fname):
         data_day_before = np.loadtxt(data_day_before_fname, delimiter=',')
         data = np.concatenate((data, data_day_before))
@@ -48,7 +48,7 @@ def get_data(name):
     data_filt = np.loadtxt(data_filt_today_fname, delimiter=',')
     if os.path.isfile(data_filt_yesterday_fname):
         data_filt_yesterday = np.loadtxt(data_filt_yesterday_fname, delimiter=',')
-        data_filtered = np.concatenate((data_filt_yesterday, data_filt_today))
+        data_filtered = np.concatenate((data_filt_yesterday, data_filt))
     if os.path.isfile(data_filt_day_before_fname):
         data_filt_day_before = np.loadtxt(data_filt_day_before_fname, delimiter=',')
         data_filtered = np.concatenate((data_filt, data_filt_day_before))
