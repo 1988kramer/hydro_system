@@ -72,7 +72,7 @@
     <remap from="/filtered_out" to="/humidity_filtered" />
     <param name="width" value="30" />
   </node>
-
+  <!--
   <node pkg="hydro_system" type="motor_hat_node.py" name="motor_hat" />
   
   <node pkg="hydro_system" type="pH_controller_node.py" name="pH_controller" output="screen" >
@@ -80,7 +80,7 @@
     <param name="range" value="0.2" />
     <param name="adjust_duration" value="1800" />
   </node> 
-
+  -->
   <node pkg="hydro_system" type="MPL3115A2_node.py" name="depth_sensor" output="screen" >
     <param name="keys_file" value="$(find hydro_system)/keys.yaml" />
   </node>

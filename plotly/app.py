@@ -39,10 +39,10 @@ def get_data(name):
         data_yesterday = np.loadtxt(data_yesterday_fname, delimiter=',')
         data = np.concatenate((data_yesterday,data))
 
-    data_filt = np.loadtxt(data_filt_today_fname, delimiter=',')
+    data_filtered = np.loadtxt(data_filt_today_fname, delimiter=',')
     if os.path.isfile(data_filt_yesterday_fname):
         data_filt_yesterday = np.loadtxt(data_filt_yesterday_fname, delimiter=',')
-        data_filtered = np.concatenate((data_filt_yesterday, data_filt))
+        data_filtered = np.concatenate((data_filt_yesterday, data_filtered))
 
     data = data[data[-1,0] - data[:,0] < 84600.0]
     data[:,0] -= data[0,0]
